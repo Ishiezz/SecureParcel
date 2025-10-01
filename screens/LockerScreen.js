@@ -4,8 +4,8 @@ import{Text,Button,Card} from 'react-native-paper';
 export default function LockerScreen(){
     return(
         <View style={styles.container}>
-            <Text style={StyleSheet.title}>Locker Details</Text>
-            <Card style={StyleSheet.card}>
+            <Text style={styles.title}>Locker Details</Text>
+            <Card style={styles.card}>
                 <Card.Content>
                     <Text>Package #1</Text>
                     <Text>Status: Ready for pickup</Text>
@@ -14,7 +14,7 @@ export default function LockerScreen(){
                     <Button>Mark as Collected</Button>
                 </Card.Actions>
             </Card>
-            <Card style={StyleSheet.card}>
+            <Card style={styles.card}>
             <Card.Content>
                 <Text>Package #2</Text>
                 <Text>Status: Ready for pickup</Text>
