@@ -33,8 +33,8 @@ const StudentDashboard = ({ navigation }) => {
         profileCard: { backgroundColor: themeColors.surface, borderColor: themeColors.border },
         statValue: { color: themeColors.primary },
         statLabel: { color: themeColors.textSecondary },
-        waitingColor: { color: '#9b59b6' }, // Purple
-        collectedColor: { color: '#1abc9c' }, // Teal
+        waitingColor: { color: '#9b59b6' },
+        collectedColor: { color: '#1abc9c' },
         waitingBadge: { backgroundColor: '#9b59b6' + '20' },
         waitingText: { color: '#9b59b6' },
     };
@@ -45,7 +45,7 @@ const StudentDashboard = ({ navigation }) => {
         <TouchableOpacity
             style={[styles.card, dynamicStyles.card]}
             activeOpacity={0.7}
-            onPress={() => { }} // Placeholder for future interaction
+            onPress={() => { }}
         >
             <View style={styles.cardHeader}>
                 <View style={styles.packageInfo}>

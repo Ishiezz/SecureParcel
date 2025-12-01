@@ -23,7 +23,7 @@ const PackageHistoryScreen = ({ navigation, route }) => {
 
     const renderItem = ({ item }) => {
         const isCollected = item.status === 'collected';
-        const statusColor = isCollected ? '#1abc9c' : '#9b59b6'; // Teal for Collected, Purple for Waiting
+        const statusColor = isCollected ? '#1abc9c' : '#9b59b6';
 
         return (
             <View style={[styles.card, { borderColor: statusColor + '40' }]}>
@@ -115,14 +115,14 @@ const PackageHistoryScreen = ({ navigation, route }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#121212', // Light Purple Background
+        backgroundColor: '#121212',
     },
     header: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
         padding: 20,
-        backgroundColor: '#1E1E1E', // Dark Purple Header
+        backgroundColor: '#1E1E1E',
         borderBottomWidth: 1,
         borderBottomColor: '#333333',
     },

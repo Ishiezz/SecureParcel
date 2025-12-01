@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Dimensions, FlatList } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Dimensions, FlatList, Image } from 'react-native';
 import { Video, ResizeMode } from 'expo-av';
 import { StatusBar } from 'expo-status-bar';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -21,7 +21,7 @@ const SplashScreen = ({ onFinish }) => {
 
     const onViewableItemsChanged = React.useRef(({ viewableItems }) => {
         if (viewableItems.length > 0) {
-            // Use the first viewable item as the active one
+
             setActiveDot(viewableItems[0].index);
         }
     }).current;
@@ -48,10 +48,14 @@ const SplashScreen = ({ onFinish }) => {
                 style={styles.overlay}
             >
                 <SafeAreaView style={styles.contentContainer}>
-                    {/* Top Left Logo */}
+
                     <View style={styles.topLogoContainer}>
                         <View style={styles.logoBox}>
-                            <MaterialCommunityIcons name="shield-check" size={32} color="#27ae60" />
+                            <Image
+                                source={require('../../assets/splash-icon.png')}
+                                style={styles.logoImage}
+                                resizeMode="contain"
+                            />
                         </View>
                     </View>
 
@@ -67,7 +71,7 @@ const SplashScreen = ({ onFinish }) => {
                         </TouchableOpacity>
                     </View>
 
-                    {/* Bottom Pills */}
+
                     <View style={styles.bottomSection}>
                         <FlatList
                             data={features}
@@ -82,7 +86,7 @@ const SplashScreen = ({ onFinish }) => {
                             viewabilityConfig={viewabilityConfig}
                         />
 
-                        {/* Pagination Dots */}
+
                         <View style={styles.paginationContainer}>
                             {[0, 1, 2].map((index) => (
                                 <View
@@ -131,19 +135,18 @@ const styles = StyleSheet.create({
     topLogoContainer: {
         alignItems: 'flex-start',
         marginTop: 10,
+        marginLeft: 10,
     },
     logoBox: {
-        width: 50,
-        height: 50,
-        backgroundColor: '#fff',
-        borderRadius: 12,
+        width: 100,
+        height: 100,
         alignItems: 'center',
         justifyContent: 'center',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.2,
-        shadowRadius: 4,
-        elevation: 4,
+    },
+    logoImage: {
+        width: 80,
+        height: 80,
+        borderRadius: 40,
     },
     mainContent: {
         flex: 1,

@@ -20,20 +20,20 @@ export const AuthProvider = ({ children }) => {
       if (role === 'student') {
         return u.id === identifier && u.password === password && u.role === role;
       } else {
-        // For delivery and guard, match ID and role
+
         return u.id === identifier && u.role === role;
       }
     });
 
     if (foundUser) {
-      // Update name if provided and different
+
       if (name && foundUser.name !== name) {
         foundUser.name = name;
         setUsers(users.map(u => u.id === foundUser.id ? foundUser : u));
       }
       setUser(foundUser);
 
-      // Save credentials for biometric login
+
       try {
         await AsyncStorage.setItem('userCredentials', JSON.stringify({
           identifier,
@@ -47,18 +47,18 @@ export const AuthProvider = ({ children }) => {
 
       return true;
     } else if (role !== 'student' && name) {
-      // Implicit signup for Delivery/Guard if name is provided
+
       const newUser = {
         name: name,
         role: role,
         id: identifier,
-        email: `${role}${identifier}@test.com`, // Dummy email
-        password: '123' // Dummy password
+        email: `${role}${identifier}@test.com`,
+        password: '123'
       };
       setUsers([...users, newUser]);
       setUser(newUser);
 
-      // Save credentials
+
       try {
         await AsyncStorage.setItem('userCredentials', JSON.stringify({
           identifier,
@@ -92,8 +92,8 @@ export const AuthProvider = ({ children }) => {
 
     const newUser = {
       name: userData.name,
-      role: userData.role, // Use passed role
-      id: userData.studentId, // This will store either Student ID or Delivery ID
+      role: userData.role,
+      id: userData.studentId,
       email: userData.email,
       password: userData.password,
       department: userData.department
@@ -101,10 +101,10 @@ export const AuthProvider = ({ children }) => {
 
     setUsers([...users, newUser]);
 
-    // Auto-login after signup
+
     setUser(newUser);
 
-    // Save credentials for biometric login
+
     try {
       await AsyncStorage.setItem('userCredentials', JSON.stringify({
         identifier: newUser.id,
@@ -159,7 +159,7 @@ export const AuthProvider = ({ children }) => {
       if (value !== null) {
         setBiometricEnabled(JSON.parse(value));
       } else {
-        // Default to true if not set
+
         setBiometricEnabled(true);
       }
     } catch (e) {

@@ -12,7 +12,7 @@ const ForgotPasswordScreen = ({ navigation }) => {
             return;
         }
 
-        // Simulate sending reset link
+
         Alert.alert('Success', 'Password reset link sent to your email!', [
             { text: 'OK', onPress: () => navigation.goBack() }
         ]);

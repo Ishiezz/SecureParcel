@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 const NotificationsScreen = ({ navigation }) => {
-    // Mock notifications data
+
     const notifications = [
         { id: '1', title: 'Package Arrived', message: 'Your package from Amazon has been deposited in Slot A-12.', time: '2 mins ago', read: false },
         { id: '2', title: 'Security Alert', message: 'Please collect your package from Slot B-05 by 6 PM.', time: '1 hour ago', read: true },

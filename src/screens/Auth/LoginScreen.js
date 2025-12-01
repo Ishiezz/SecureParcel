@@ -25,10 +25,10 @@ const LoginScreen = ({ navigation }) => {
             const types = await LocalAuthentication.supportedAuthenticationTypesAsync();
 
             if ((compatible && enrolled) || __DEV__) {
-                // Check if either Fingerprint or Face ID is supported
+
                 const hasBiometrics = types.includes(LocalAuthentication.AuthenticationType.FINGERPRINT) ||
                     types.includes(LocalAuthentication.AuthenticationType.FACIAL_RECOGNITION) ||
-                    __DEV__; // Always allow in DEV
+                    __DEV__;
 
                 if (hasBiometrics) {
                     setIsBiometricSupported(true);
@@ -118,6 +118,8 @@ const LoginScreen = ({ navigation }) => {
     };
 
     const primaryColor = ROLE_COLORS[role];
+
+
 
     return (
         <SafeAreaView style={styles.container}>
@@ -247,6 +249,16 @@ const LoginScreen = ({ navigation }) => {
                         </TouchableOpacity>
 
 
+
+                        {role === 'student' && isBiometricSupported && biometricEnabled && (
+                            <TouchableOpacity
+                                style={[styles.biometricBtn, { borderColor: primaryColor }]}
+                                onPress={handleBiometricLogin}
+                            >
+                                <MaterialCommunityIcons name="fingerprint" size={32} color={primaryColor} />
+                                <Text style={[styles.biometricText, { color: primaryColor }]}>Login with Touch ID</Text>
+                            </TouchableOpacity>
+                        )}
 
                         {role === 'student' && (
                             <>
