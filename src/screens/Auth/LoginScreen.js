@@ -2,17 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, TextInput, Alert, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { useAuth } from '../../context/AuthContext';
 import { useSplash } from '../../context/SplashContext';
-import { useTheme } from '../../context/ThemeContext';
+
 import { SafeAreaView } from 'react-native-safe-area-context';
 
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { COLORS } from '../../constants/colors';
 import * as LocalAuthentication from 'expo-local-authentication';
 
 const LoginScreen = ({ navigation }) => {
-    const { login } = useAuth();
+    const { login, getSavedCredentials, biometricEnabled } = useAuth();
     const { setIsShowSplash } = useSplash();
-    const { colors: COLORS } = useTheme();
     const [role, setRole] = useState('student');
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
@@ -26,13 +24,31 @@ const LoginScreen = ({ navigation }) => {
             const enrolled = await LocalAuthentication.isEnrolledAsync();
             const types = await LocalAuthentication.supportedAuthenticationTypesAsync();
 
-            if (compatible && enrolled && types.includes(LocalAuthentication.AuthenticationType.FINGERPRINT)) {
-                setIsBiometricSupported(true);
+            if (compatible && enrolled) {
+                // Check if either Fingerprint or Face ID is supported
+                const hasBiometrics = types.includes(LocalAuthentication.AuthenticationType.FINGERPRINT) ||
+                    types.includes(LocalAuthentication.AuthenticationType.FACIAL_RECOGNITION);
+
+                if (hasBiometrics) {
+                    setIsBiometricSupported(true);
+                }
             }
         })();
     }, []);
 
     const handleBiometricLogin = async () => {
+        const savedCredentials = await getSavedCredentials();
+
+        if (!savedCredentials) {
+            Alert.alert('Login Required', 'Please login manually first to enable Touch ID.');
+            return;
+        }
+
+        if (savedCredentials.role !== 'student') {
+            Alert.alert('Role Mismatch', 'The saved account is not a Student account. Please login manually.');
+            return;
+        }
+
         try {
             const result = await LocalAuthentication.authenticateAsync({
                 promptMessage: 'Login with Touch ID',
@@ -40,9 +56,10 @@ const LoginScreen = ({ navigation }) => {
             });
 
             if (result.success) {
-                const success = login('S123', '123', 'student', 'Isha Singh');
+                const { identifier, password, role, name } = savedCredentials;
+                const success = await login(identifier, password, role, name);
                 if (!success) {
-                    Alert.alert('Error', 'Demo login failed');
+                    Alert.alert('Error', 'Login failed with saved credentials');
                 }
             }
         } catch (error) {
@@ -50,7 +67,7 @@ const LoginScreen = ({ navigation }) => {
         }
     };
 
-    const handleLogin = () => {
+    const handleLogin = async () => {
         if (role === 'student' || role === 'delivery' || role === 'guard') {
             if (!email) {
                 let roleName = 'Student';
@@ -70,7 +87,7 @@ const LoginScreen = ({ navigation }) => {
                 return;
             }
 
-            const success = login(email, password, role, name);
+            const success = await login(email, password, role, name);
             if (!success) {
                 Alert.alert('Login Failed', 'Invalid Credentials');
             }
@@ -89,6 +106,14 @@ const LoginScreen = ({ navigation }) => {
         return "shield-account-outline";
     };
 
+    const ROLE_COLORS = {
+        student: '#D4AF37',
+        delivery: '#F39C12',
+        guard: '#FFB300'
+    };
+
+    const primaryColor = ROLE_COLORS[role];
+
     return (
         <SafeAreaView style={styles.container}>
             <KeyboardAvoidingView
@@ -100,7 +125,7 @@ const LoginScreen = ({ navigation }) => {
                         style={styles.backButton}
                         onPress={() => setIsShowSplash(true)}
                     >
-                        <MaterialCommunityIcons name="arrow-left" size={24} color={COLORS.textPrimary} />
+                        <MaterialCommunityIcons name="arrow-left" size={24} color="#FFFFFF" />
                     </TouchableOpacity>
 
                     {role === 'student' && (
@@ -112,19 +137,19 @@ const LoginScreen = ({ navigation }) => {
 
                     <View style={styles.roleContainer}>
                         <TouchableOpacity
-                            style={[styles.roleTab, role === 'student' && styles.activeTab]}
+                            style={[styles.roleTab, role === 'student' && { backgroundColor: ROLE_COLORS.student }]}
                             onPress={() => setRole('student')}
                         >
                             <Text style={[styles.roleText, role === 'student' && styles.activeRoleText]}>Student</Text>
                         </TouchableOpacity>
                         <TouchableOpacity
-                            style={[styles.roleTab, role === 'delivery' && styles.activeTab]}
+                            style={[styles.roleTab, role === 'delivery' && { backgroundColor: ROLE_COLORS.delivery }]}
                             onPress={() => setRole('delivery')}
                         >
                             <Text style={[styles.roleText, role === 'delivery' && styles.activeRoleText]}>Delivery</Text>
                         </TouchableOpacity>
                         <TouchableOpacity
-                            style={[styles.roleTab, role === 'guard' && styles.activeTab]}
+                            style={[styles.roleTab, role === 'guard' && { backgroundColor: ROLE_COLORS.guard }]}
                             onPress={() => setRole('guard')}
                         >
                             <Text style={[styles.roleText, role === 'guard' && styles.activeRoleText]}>Guard</Text>
@@ -136,11 +161,11 @@ const LoginScreen = ({ navigation }) => {
                             <>
                                 <Text style={styles.label}>Full Name</Text>
                                 <View style={styles.inputContainer}>
-                                    <MaterialCommunityIcons name="account-outline" size={20} color={COLORS.textSecondary} style={styles.inputIcon} />
+                                    <MaterialCommunityIcons name="account-outline" size={20} color="#B0B0B0" style={styles.inputIcon} />
                                     <TextInput
                                         style={styles.input}
                                         placeholder="Enter your Name"
-                                        placeholderTextColor={COLORS.textSecondary}
+                                        placeholderTextColor="#B0B0B0"
                                         value={name}
                                         onChangeText={setName}
                                     />
@@ -153,13 +178,13 @@ const LoginScreen = ({ navigation }) => {
                             <MaterialCommunityIcons
                                 name={getRoleIcon()}
                                 size={20}
-                                color={COLORS.textSecondary}
+                                color="#B0B0B0"
                                 style={styles.inputIcon}
                             />
                             <TextInput
                                 style={styles.input}
                                 placeholder={`Enter your ${getRoleLabel()}`}
-                                placeholderTextColor={COLORS.textSecondary}
+                                placeholderTextColor="#B0B0B0"
                                 value={email}
                                 onChangeText={setEmail}
                                 autoCapitalize="characters"
@@ -170,11 +195,11 @@ const LoginScreen = ({ navigation }) => {
                             <>
                                 <Text style={styles.label}>Password</Text>
                                 <View style={styles.inputContainer}>
-                                    <MaterialCommunityIcons name="lock-outline" size={20} color={COLORS.textSecondary} style={styles.inputIcon} />
+                                    <MaterialCommunityIcons name="lock-outline" size={20} color="#B0B0B0" style={styles.inputIcon} />
                                     <TextInput
                                         style={styles.input}
                                         placeholder="Enter your Password"
-                                        placeholderTextColor={COLORS.textSecondary}
+                                        placeholderTextColor="#B0B0B0"
                                         value={password}
                                         onChangeText={setPassword}
                                         secureTextEntry={!isPasswordVisible}
@@ -183,13 +208,13 @@ const LoginScreen = ({ navigation }) => {
                                         <MaterialCommunityIcons
                                             name={isPasswordVisible ? "eye-off-outline" : "eye-outline"}
                                             size={20}
-                                            color={COLORS.textSecondary}
+                                            color="#B0B0B0"
                                         />
                                     </TouchableOpacity>
                                 </View>
 
                                 <TouchableOpacity style={styles.forgotPassword} onPress={() => navigation.navigate('ForgotPassword')}>
-                                    <Text style={styles.forgotPasswordText}>Forgot Password?</Text>
+                                    <Text style={[styles.forgotPasswordText, { color: primaryColor }]}>Forgot Password?</Text>
                                 </TouchableOpacity>
                             </>
                         )}
@@ -197,8 +222,7 @@ const LoginScreen = ({ navigation }) => {
                         <TouchableOpacity
                             style={[
                                 styles.loginBtn,
-                                role === 'delivery' && styles.deliveryBtn,
-                                role === 'guard' && styles.guardBtn
+                                { backgroundColor: primaryColor }
                             ]}
                             onPress={handleLogin}
                         >
@@ -210,17 +234,20 @@ const LoginScreen = ({ navigation }) => {
                                     <MaterialCommunityIcons
                                         name="arrow-right"
                                         size={20}
-                                        color={COLORS.white}
+                                        color="#FFFFFF"
                                         style={{ marginLeft: 8 }}
                                     />
                                 )}
                             </View>
                         </TouchableOpacity>
 
-                        {role === 'student' && isBiometricSupported && (
-                            <TouchableOpacity style={styles.biometricBtn} onPress={handleBiometricLogin}>
-                                <MaterialCommunityIcons name="fingerprint" size={32} color={COLORS.primary} />
-                                <Text style={styles.biometricText}>Login with Touch ID</Text>
+                        {role === 'student' && isBiometricSupported && biometricEnabled && (
+                            <TouchableOpacity
+                                style={[styles.biometricBtn, { borderColor: primaryColor }]}
+                                onPress={handleBiometricLogin}
+                            >
+                                <MaterialCommunityIcons name="fingerprint" size={32} color={primaryColor} />
+                                <Text style={[styles.biometricText, { color: primaryColor }]}>Login with Touch ID</Text>
                             </TouchableOpacity>
                         )}
 
@@ -234,7 +261,7 @@ const LoginScreen = ({ navigation }) => {
                                 <View style={styles.signupContainer}>
                                     <Text style={styles.signupText}>Don't have an account? </Text>
                                     <TouchableOpacity onPress={() => navigation.navigate('Signup', { initialRole: role })}>
-                                        <Text style={styles.signupLink}>Sign Up</Text>
+                                        <Text style={[styles.signupLink, { color: primaryColor }]}>Sign Up</Text>
                                     </TouchableOpacity>
                                 </View>
                             </>
@@ -250,7 +277,7 @@ const LoginScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: COLORS.background,
+        backgroundColor: '#121212',
     },
     scrollContent: {
         flexGrow: 1,
@@ -263,7 +290,7 @@ const styles = StyleSheet.create({
         left: 20,
         zIndex: 10,
         padding: 8,
-        backgroundColor: COLORS.surface,
+        backgroundColor: '#1E1E1E',
         borderRadius: 20,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
@@ -279,21 +306,21 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 35,
         fontWeight: 'bold',
-        color: COLORS.textPrimary,
+        color: '#FFFFFF',
         marginBottom: 10,
     },
     subtitle: {
         fontSize: 19,
-        color: COLORS.textSecondary,
+        color: '#B0B0B0',
     },
     roleContainer: {
         flexDirection: 'row',
-        backgroundColor: COLORS.surface,
+        backgroundColor: '#1E1E1E',
         borderRadius: 10,
         padding: 4,
         marginBottom: 30,
         borderWidth: 1,
-        borderColor: COLORS.border,
+        borderColor: '#333333',
     },
     roleTab: {
         flex: 1,
@@ -301,19 +328,16 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         borderRadius: 8,
     },
-    activeTab: {
-        backgroundColor: COLORS.primary,
-    },
     roleText: {
-        color: COLORS.textSecondary,
+        color: '#B0B0B0',
         fontWeight: '600',
     },
     activeRoleText: {
-        color: COLORS.white,
+        color: '#FFFFFF',
         fontWeight: 'bold',
     },
     form: {
-        backgroundColor: COLORS.surface,
+        backgroundColor: '#1E1E1E',
         padding: 25,
         borderRadius: 15,
         shadowColor: '#000',
@@ -322,11 +346,11 @@ const styles = StyleSheet.create({
         shadowRadius: 8,
         elevation: 5,
         borderWidth: 1,
-        borderColor: COLORS.border,
+        borderColor: '#333333',
     },
     label: {
         fontSize: 16,
-        color: COLORS.textSecondary,
+        color: '#B0B0B0',
         marginBottom: 8,
         marginTop: 10,
         fontWeight: '500',
@@ -335,9 +359,9 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         borderWidth: 1,
-        borderColor: COLORS.border,
+        borderColor: '#333333',
         borderRadius: 8,
-        backgroundColor: COLORS.inputBackground,
+        backgroundColor: '#2C2C2C',
         paddingHorizontal: 12,
         marginBottom: 5,
     },
@@ -348,30 +372,23 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingVertical: 12,
         fontSize: 16,
-        color: COLORS.textPrimary,
+        color: '#FFFFFF',
     },
     infoText: {
         textAlign: 'center',
         fontSize: 16,
-        color: COLORS.textSecondary,
+        color: '#B0B0B0',
         marginBottom: 20,
         marginTop: 10,
     },
     loginBtn: {
-        backgroundColor: COLORS.primary,
         padding: 16,
         borderRadius: 8,
         marginTop: 30,
         alignItems: 'center',
     },
-    deliveryBtn: {
-        backgroundColor: COLORS.primary,
-    },
-    guardBtn: {
-        backgroundColor: COLORS.primary,
-    },
     loginText: {
-        color: COLORS.white,
+        color: '#FFFFFF',
         fontSize: 18,
         fontWeight: 'bold',
     },
@@ -382,13 +399,11 @@ const styles = StyleSheet.create({
         marginTop: 20,
         padding: 10,
         borderWidth: 1,
-        borderColor: COLORS.primary,
         borderRadius: 8,
         borderStyle: 'dashed',
         backgroundColor: 'rgba(52, 152, 219, 0.05)',
     },
     biometricText: {
-        color: COLORS.primary,
         fontSize: 16,
         fontWeight: 'bold',
         marginLeft: 10,
@@ -406,27 +421,25 @@ const styles = StyleSheet.create({
     dividerLine: {
         flex: 1,
         height: 1,
-        backgroundColor: COLORS.border,
+        backgroundColor: '#333333',
     },
     dividerText: {
         marginHorizontal: 10,
-        color: COLORS.textSecondary,
+        color: '#B0B0B0',
         fontSize: 14,
         fontWeight: '600',
     },
     signupText: {
-        color: COLORS.textSecondary,
+        color: '#B0B0B0',
         fontSize: 14,
     },
     signupLink: {
-        color: COLORS.primary,
         fontSize: 14,
         fontWeight: 'bold',
     },
     formTitle: {
         fontSize: 24,
         fontWeight: 'bold',
-        color: COLORS.primary,
         textAlign: 'center',
         marginBottom: 20,
     },
@@ -436,13 +449,12 @@ const styles = StyleSheet.create({
         marginTop: 5,
     },
     forgotPasswordText: {
-        color: COLORS.primary,
         fontSize: 14,
         fontWeight: '600',
     },
     footerText: {
         textAlign: 'center',
-        color: COLORS.textSecondary,
+        color: '#B0B0B0',
         fontSize: 12,
         marginTop: 30,
         opacity: 0.7,

@@ -4,25 +4,33 @@ import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { COLORS } from '../../constants/colors';
 
 const GuardDashboard = ({ navigation }) => {
     const { user, logout, packages, collectPackage } = useAuth();
     const { colors: themeColors } = useTheme();
 
     const dynamicStyles = {
-        header: { backgroundColor: themeColors.surface, borderBottomColor: themeColors.border },
+        header: {
+            backgroundColor: themeColors.surface,
+            borderBottomColor: themeColors.border,
+            shadowColor: themeColors.shadow || '#000',
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.1,
+            shadowRadius: 4,
+            elevation: 3,
+        },
         card: { backgroundColor: themeColors.surface, borderColor: themeColors.border },
-        selectedCard: { borderColor: themeColors.primary, backgroundColor: themeColors.primary + '10' },
+        selectedCard: { borderColor: themeColors.primary, backgroundColor: themeColors.primary + '15', borderWidth: 2 },
         iconContainer: { backgroundColor: themeColors.background },
         button: { backgroundColor: themeColors.primary },
         buttonText: { color: themeColors.white },
         input: { backgroundColor: themeColors.inputBackground, color: themeColors.textPrimary, borderColor: themeColors.border },
         placeholder: themeColors.textSecondary,
-        modalContent: { backgroundColor: themeColors.surface },
+        modalContent: { backgroundColor: themeColors.surface, shadowColor: '#000', shadowOffset: { width: 0, height: 10 }, shadowOpacity: 0.3, shadowRadius: 20, elevation: 10 },
         textPrimary: { color: themeColors.textPrimary },
         textSecondary: { color: themeColors.textSecondary },
         primaryColor: themeColors.primary,
+        otpSection: { backgroundColor: themeColors.surface, borderColor: themeColors.border },
     };
 
     const [isScanning, setIsScanning] = useState(false);
@@ -78,7 +86,7 @@ const GuardDashboard = ({ navigation }) => {
                 {
                     text: 'Complete Handover',
                     onPress: () => {
-                        collectPackage(verifiedPackage.id);
+                        collectPackage(verifiedPackage.id, user?.name, user?.id);
                         setOtp(['', '', '', '']);
                         setSelectedId(null);
                         setVerifiedPackage(null);
@@ -106,20 +114,34 @@ const GuardDashboard = ({ navigation }) => {
             <TouchableOpacity
                 style={[styles.card, dynamicStyles.card, isSelected && dynamicStyles.selectedCard]}
                 onPress={() => setSelectedPackage(item)}
+                activeOpacity={0.7}
             >
-                <View style={styles.cardHeader}>
-                    <View style={[styles.iconContainer, dynamicStyles.iconContainer]}>
-                        <MaterialCommunityIcons name="package-variant" size={24} color={themeColors.primary} />
-                    </View>
-                    <View style={styles.packageInfo}>
-                        <Text style={[styles.courier, dynamicStyles.textPrimary]}>{item.courier}</Text>
-                        <Text style={[styles.slot, dynamicStyles.textSecondary]}>Slot: {item.slot}</Text>
-                    </View>
-                    <View style={styles.studentInfo}>
-                        <Text style={[styles.studentId, dynamicStyles.textPrimary]}>{item.studentId}</Text>
-                        <Text style={[styles.otpDisplay, { color: themeColors.primary }]}>OTP: {item.otp}</Text>
-                    </View>
+                <View style={[styles.iconContainer, dynamicStyles.iconContainer, isSelected && styles.cardIconSelected]}>
+                    <MaterialCommunityIcons
+                        name="package-variant"
+                        size={24}
+                        color={isSelected ? '#FFFFFF' : themeColors.primary}
+                    />
                 </View>
+
+                <View style={styles.cardContent}>
+                    <Text style={[styles.studentName, dynamicStyles.textPrimary]}>
+                        {item.studentName} <Text style={{ fontWeight: 'normal', fontSize: 14, color: themeColors.textSecondary }}>({item.studentId})</Text>
+                    </Text>
+                    <Text style={[styles.subtext, dynamicStyles.textSecondary]}>
+                        {item.courier}
+                    </Text>
+                </View>
+
+                <View style={[styles.slotBadge, { backgroundColor: themeColors.primary + '15' }]}>
+                    <Text style={[styles.slotText, { color: themeColors.primary }]}>{item.slot}</Text>
+                </View>
+
+                {isSelected && (
+                    <View style={styles.selectedIndicator}>
+                        <MaterialCommunityIcons name="check-circle" size={20} color={themeColors.primary} />
+                    </View>
+                )}
             </TouchableOpacity>
         );
     };
@@ -129,7 +151,7 @@ const GuardDashboard = ({ navigation }) => {
             <View style={[styles.header, dynamicStyles.header]}>
                 <View>
 
-                    <Text style={[styles.username, dynamicStyles.textPrimary]}>{user?.name || 'Security Guard'}</Text>
+                    <Text style={[styles.username, dynamicStyles.textPrimary]}>Security Guard</Text>
                 </View>
                 <View style={styles.headerRight}>
 
@@ -140,7 +162,7 @@ const GuardDashboard = ({ navigation }) => {
             </View>
 
             <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{ flex: 1 }}>
-                <View style={styles.verifySection}>
+                <View style={[styles.verifySection, dynamicStyles.otpSection]}>
                     <View style={styles.verifyHeader}>
                         <MaterialCommunityIcons name="shield-check-outline" size={30} color={themeColors.success} />
                         <Text style={styles.sectionTitle}>
@@ -161,9 +183,8 @@ const GuardDashboard = ({ navigation }) => {
                                 style={[
                                     styles.otpBox,
                                     dynamicStyles.input,
-                                    { borderColor: COLORS.black },
                                     digit ? styles.otpBoxFilled : null,
-                                    digit ? { backgroundColor: themeColors.primary + '10' } : null
+                                    digit ? { borderColor: themeColors.primary, backgroundColor: themeColors.primary + '15' } : { borderColor: themeColors.border }
                                 ]}
                                 value={digit}
                                 onChangeText={(value) => handleOtpChange(value, index)}
@@ -208,7 +229,7 @@ const GuardDashboard = ({ navigation }) => {
 
             <Modal visible={showModal} transparent animationType="fade">
                 <View style={styles.modalOverlay}>
-                    <View style={styles.modalContent}>
+                    <View style={[styles.modalContent, dynamicStyles.modalContent]}>
                         <View style={styles.modalHeader}>
                             <MaterialCommunityIcons name="account-check-outline" size={40} color={themeColors.primary} />
                         </View>
@@ -242,25 +263,39 @@ const GuardDashboard = ({ navigation }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: COLORS.background,
+        backgroundColor: '#121212',
     },
     header: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        padding: 20,
-        backgroundColor: COLORS.surface,
+        paddingHorizontal: 24,
+        paddingVertical: 16,
+        backgroundColor: '#1E1E1E',
         borderBottomWidth: 1,
-        borderBottomColor: COLORS.border,
+        borderBottomColor: '#333333',
+        zIndex: 10,
+    },
+    welcomeText: {
+        fontSize: 12,
+        color: '#B0B0B0',
+        marginBottom: 2,
+        textTransform: 'uppercase',
+        letterSpacing: 1,
+    },
+    username: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: '#FFFFFF',
     },
     title: {
         fontSize: 22,
         fontWeight: 'bold',
-        color: COLORS.textPrimary,
+        color: '#FFFFFF',
     },
     subtitle: {
         fontSize: 14,
-        color: COLORS.textSecondary,
+        color: '#B0B0B0',
     },
     logoutBtn: {
         padding: 8,
@@ -268,17 +303,17 @@ const styles = StyleSheet.create({
         borderRadius: 8,
     },
     verifySection: {
-        padding: 20,
-        backgroundColor: COLORS.surface,
+        padding: 24,
+        backgroundColor: '#1E1E1E',
         margin: 20,
-        borderRadius: 16,
+        borderRadius: 24,
         borderWidth: 1,
-        borderColor: COLORS.border,
+        borderColor: '#333333',
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.3,
-        shadowRadius: 8,
-        elevation: 5,
+        shadowOffset: { width: 0, height: 8 },
+        shadowOpacity: 0.15,
+        shadowRadius: 12,
+        elevation: 8,
     },
     verifyHeader: {
         flexDirection: 'row',
@@ -288,12 +323,12 @@ const styles = StyleSheet.create({
     sectionTitle: {
         fontSize: 18,
         fontWeight: 'bold',
-        color: COLORS.textPrimary,
+        color: '#FFFFFF',
         marginLeft: 10,
     },
     label: {
         fontSize: 14,
-        color: COLORS.textSecondary,
+        color: '#B0B0B0',
         marginBottom: 8,
     },
     otpContainer: {
@@ -303,32 +338,37 @@ const styles = StyleSheet.create({
         marginTop: 10,
     },
     otpBox: {
-        width: 60,
-        height: 60,
-        borderWidth: 1,
-        borderColor: COLORS.primary,
-        borderRadius: 12,
-        backgroundColor: COLORS.inputBackground,
-        fontSize: 24,
+        width: 65,
+        height: 65,
+        borderWidth: 1.5,
+        borderColor: '#333333',
+        borderRadius: 16,
+        backgroundColor: '#2C2C2C',
+        fontSize: 28,
         fontWeight: 'bold',
-        color: COLORS.textPrimary,
+        color: '#FFFFFF',
         textAlign: 'center',
-        elevation: 2,
+        elevation: 0,
     },
     otpBoxFilled: {
-        borderColor: COLORS.primary,
+        borderColor: '#D4AF37',
         backgroundColor: 'rgba(39, 174, 96, 0.1)',
     },
     verifyBtn: {
-        backgroundColor: COLORS.primary,
-        padding: 16,
-        borderRadius: 12,
+        backgroundColor: '#D4AF37',
+        padding: 18,
+        borderRadius: 16,
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
+        shadowColor: '#D4AF37',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 8,
+        elevation: 6,
     },
     verifyBtnText: {
-        color: COLORS.white,
+        color: '#FFFFFF',
         fontWeight: 'bold',
         fontSize: 16,
         marginRight: 8,
@@ -346,82 +386,85 @@ const styles = StyleSheet.create({
     listTitle: {
         fontSize: 18,
         fontWeight: 'bold',
-        color: COLORS.textPrimary,
+        color: '#FFFFFF',
     },
     countBadge: {
-        backgroundColor: COLORS.surface,
+        backgroundColor: '#1E1E1E',
         paddingHorizontal: 10,
         paddingVertical: 4,
         borderRadius: 12,
         borderWidth: 1,
-        borderColor: COLORS.border,
+        borderColor: '#333333',
     },
     countText: {
-        color: COLORS.primary,
+        color: '#D4AF37',
         fontWeight: 'bold',
     },
     listContent: {
         paddingBottom: 20,
     },
     card: {
-        backgroundColor: COLORS.surface,
-        padding: 15,
-        borderRadius: 16,
-        marginBottom: 12,
+        backgroundColor: '#1E1E1E',
+        padding: 16,
+        borderRadius: 20,
+        marginBottom: 16,
+        borderWidth: 1,
+        borderColor: '#333333',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.05,
+        shadowRadius: 4,
+        elevation: 2,
         flexDirection: 'row',
         alignItems: 'center',
-        borderWidth: 1,
-        borderColor: COLORS.border,
     },
-    cardIcon: {
-        width: 40,
-        height: 40,
-        borderRadius: 20,
+    iconContainer: {
+        width: 48,
+        height: 48,
+        borderRadius: 14,
         backgroundColor: 'rgba(39, 174, 96, 0.1)',
         justifyContent: 'center',
         alignItems: 'center',
-        marginRight: 15,
+        marginRight: 16,
     },
     cardContent: {
         flex: 1,
+        marginLeft: 4,
     },
-    cardHeader: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        marginBottom: 4,
+    subtext: {
+        fontSize: 13,
+        marginTop: 2,
     },
-    slot: {
-        fontWeight: 'bold',
-        fontSize: 16,
-        color: COLORS.textPrimary,
+    slotBadge: {
+        paddingHorizontal: 12,
+        paddingVertical: 6,
+        borderRadius: 12,
+        marginLeft: 8,
     },
-    statusBadge: {
-        backgroundColor: 'rgba(39, 174, 96, 0.2)',
-        paddingHorizontal: 8,
-        paddingVertical: 2,
-        borderRadius: 8,
-    },
-    statusText: {
-        color: COLORS.primary,
-        fontSize: 10,
-        fontWeight: 'bold',
-    },
-    studentName: {
-        color: COLORS.textPrimary,
-        fontSize: 14,
-        marginBottom: 2,
-    },
-    courier: {
-        color: COLORS.textSecondary,
+    slotText: {
         fontSize: 12,
+        fontWeight: 'bold',
+    },
+
+
+
+    studentName: {
+        color: '#FFFFFF',
+        fontSize: 16,
+        fontWeight: 'bold',
+    },
+
+    selectedIndicator: {
+        position: 'absolute',
+        top: 10,
+        right: 10,
     },
     emptyState: {
         alignItems: 'center',
         marginTop: 30,
     },
     emptyText: {
-        color: COLORS.textSecondary,
+        color: '#B0B0B0',
         fontStyle: 'italic',
     },
     modalOverlay: {
@@ -431,13 +474,13 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     modalContent: {
-        backgroundColor: COLORS.surface,
+        backgroundColor: '#1E1E1E',
         width: '85%',
         padding: 30,
         borderRadius: 24,
         alignItems: 'center',
         borderWidth: 1,
-        borderColor: COLORS.border,
+        borderColor: '#333333',
     },
     modalHeader: {
         marginBottom: 20,
@@ -448,12 +491,12 @@ const styles = StyleSheet.create({
     modalTitle: {
         fontSize: 22,
         fontWeight: 'bold',
-        color: COLORS.textPrimary,
+        color: '#FFFFFF',
         marginBottom: 10,
     },
     modalSubtitle: {
         fontSize: 16,
-        color: COLORS.textSecondary,
+        color: '#B0B0B0',
         marginBottom: 30,
         textAlign: 'center',
     },
@@ -468,32 +511,32 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     tapText: {
-        color: COLORS.textSecondary,
+        color: '#B0B0B0',
         marginTop: 10,
         fontSize: 14,
     },
     scanText: {
         marginTop: 15,
-        color: COLORS.primary,
+        color: '#D4AF37',
         fontWeight: '500',
     },
     cancelText: {
-        color: COLORS.textSecondary,
+        color: '#B0B0B0',
         fontSize: 16,
     },
     cardSelected: {
-        borderColor: COLORS.primary,
+        borderColor: '#D4AF37',
         backgroundColor: 'rgba(39, 174, 96, 0.05)',
         borderWidth: 2,
     },
     cardIconSelected: {
-        backgroundColor: COLORS.primary,
+        backgroundColor: '#D4AF37',
     },
     statusBadgeSelected: {
-        backgroundColor: COLORS.primary,
+        backgroundColor: '#D4AF37',
     },
     statusTextSelected: {
-        color: COLORS.white,
+        color: '#FFFFFF',
     },
 });
 

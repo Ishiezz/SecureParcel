@@ -4,58 +4,91 @@ import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { COLORS } from '../../constants/colors';
 
 const StudentDashboard = ({ navigation }) => {
     const { user, logout, packages } = useAuth();
     const { colors: themeColors } = useTheme();
 
     const dynamicStyles = {
-        header: { backgroundColor: themeColors.surface, borderBottomColor: themeColors.border },
-        iconBtn: { backgroundColor: themeColors.background },
+        header: {
+            backgroundColor: themeColors.surface,
+            borderBottomColor: themeColors.border,
+            shadowColor: themeColors.shadow || '#000',
+            shadowOffset: { width: 0, height: 2 },
+            shadowOpacity: 0.1,
+            shadowRadius: 4,
+            elevation: 3,
+        },
+        iconBtn: { backgroundColor: 'transparent' },
         badge: { backgroundColor: themeColors.error, borderColor: themeColors.surface },
         card: { backgroundColor: themeColors.surface, borderColor: themeColors.border },
         iconContainer: { backgroundColor: themeColors.background },
         courier: { color: themeColors.textPrimary },
         date: { color: themeColors.textSecondary },
         id: { color: themeColors.textSecondary },
-        statusBadge: { backgroundColor: themeColors.primary + '20' },
+        statusBadge: { backgroundColor: themeColors.primary + '15' },
         statusText: { color: themeColors.primary },
         emptyText: { color: themeColors.textSecondary },
         fab: { backgroundColor: themeColors.primary },
+        profileCard: { backgroundColor: themeColors.surface, borderColor: themeColors.border },
+        statValue: { color: themeColors.primary },
+        statLabel: { color: themeColors.textSecondary },
+        waitingColor: { color: '#9b59b6' }, // Purple
+        collectedColor: { color: '#1abc9c' }, // Teal
+        waitingBadge: { backgroundColor: '#9b59b6' + '20' },
+        waitingText: { color: '#9b59b6' },
     };
 
     const myPackages = packages.filter(p => p.status === 'stored');
 
     const renderPackage = ({ item }) => (
-        <View style={[styles.card, dynamicStyles.card]}>
+        <TouchableOpacity
+            style={[styles.card, dynamicStyles.card]}
+            activeOpacity={0.7}
+            onPress={() => { }} // Placeholder for future interaction
+        >
             <View style={styles.cardHeader}>
-                <View style={styles.courierInfo}>
-                    <View style={[styles.iconContainer, dynamicStyles.iconContainer]}>
-                        <MaterialCommunityIcons name="package-variant-closed" size={24} color={themeColors.primary} />
-                    </View>
-                    <View>
-                        <Text style={[styles.courier, dynamicStyles.courier]}>{item.courier}</Text>
-                        <Text style={[styles.date, dynamicStyles.date]}>{new Date(item.timestamp).toLocaleDateString()}</Text>
-                    </View>
+                <View style={styles.packageInfo}>
+                    <Text style={[styles.courier, dynamicStyles.courier]}>{item.courier}</Text>
+                    <Text style={[styles.date, dynamicStyles.date]}>Arrived: {new Date(item.timestamp).toLocaleDateString('en-US', { weekday: 'short', day: 'numeric', month: 'short' })}</Text>
                 </View>
-                <View style={[styles.statusBadge, dynamicStyles.statusBadge]}>
-                    <Text style={[styles.statusText, dynamicStyles.statusText]}>Ready</Text>
+                <View style={[styles.statusBadge, dynamicStyles.waitingBadge]}>
+                    <Text style={[styles.statusText, dynamicStyles.waitingText]}>Ready</Text>
                 </View>
             </View>
-            <View style={styles.cardFooter}>
-                <Text style={[styles.id, dynamicStyles.id]}>ID: {item.id}</Text>
-                <MaterialCommunityIcons name="chevron-right" size={20} color={themeColors.textSecondary} />
+
+            <View style={styles.divider} />
+
+            <View style={styles.cardBody}>
+                <View style={styles.detailRow}>
+                    <View style={styles.detailItem}>
+                        <Text style={[styles.label, { color: themeColors.textSecondary }]}>Slot Number</Text>
+                        <Text style={[styles.value, { color: themeColors.textPrimary, fontSize: 18 }]}>{item.slot || 'N/A'}</Text>
+                    </View>
+                    <View style={styles.detailItem}>
+                        <Text style={[styles.label, { color: themeColors.textSecondary }]}>Package ID</Text>
+                        <Text style={[styles.value, { color: themeColors.textPrimary }]}>{item.id}</Text>
+                    </View>
+                </View>
+
+                <View style={styles.otpSection}>
+                    <Text style={[styles.otpLabel, { color: themeColors.textSecondary }]}>Collection OTP</Text>
+                    <View style={[styles.otpBox, { borderColor: themeColors.primary }]}>
+                        <Text style={[styles.otpValue, { color: themeColors.primary }]}>{item.otp}</Text>
+                    </View>
+                </View>
             </View>
-        </View>
+        </TouchableOpacity>
     );
 
     return (
         <SafeAreaView style={styles.container}>
             <View style={[styles.header, dynamicStyles.header]}>
-                <View>
-                    <Text style={[styles.greeting, { color: themeColors.textSecondary }]}>Hello,</Text>
-                    <Text style={[styles.username, { color: themeColors.textPrimary }]}>{user?.name || 'Student'}</Text>
+                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                    <TouchableOpacity onPress={logout} style={{ marginRight: 15 }}>
+                        <MaterialCommunityIcons name="arrow-left" size={24} color={themeColors.textPrimary} />
+                    </TouchableOpacity>
+
                 </View>
                 <View style={styles.headerRight}>
                     <TouchableOpacity onPress={() => navigation.navigate('Notifications')} style={[styles.iconBtn, dynamicStyles.iconBtn]}>
@@ -74,39 +107,48 @@ const StudentDashboard = ({ navigation }) => {
                 keyExtractor={item => item.id}
                 contentContainerStyle={styles.list}
                 ListHeaderComponent={
-                    <View style={styles.profileCard}>
+                    <View style={[styles.profileCard, dynamicStyles.profileCard]}>
                         <View style={styles.profileHeader}>
                             <View style={styles.avatarContainer}>
                                 <Text style={styles.avatarText}>{user?.name?.charAt(0) || 'S'}</Text>
                             </View>
                             <View style={styles.profileInfo}>
-                                <Text style={styles.profileName}>{user?.name || 'Student'}</Text>
-                                <Text style={styles.profileId}>ID: {user?.studentId || 'S-XXXX'}</Text>
-                                <Text style={styles.profileEmail}>{user?.email || 'student@university.edu'}</Text>
+                                <Text style={[styles.profileName, { color: themeColors.textPrimary }]}>{user?.name || 'Student'}</Text>
+                                <Text style={[styles.profileId, { color: themeColors.textSecondary }]}>ID: {user?.studentId || 'S-XXXX'}</Text>
+                                <Text style={[styles.profileEmail, { color: themeColors.textSecondary }]}>{user?.email || 'student@university.edu'}</Text>
                             </View>
                         </View>
 
-                        <View style={styles.statsRow}>
-                            <View style={styles.statItem}>
-                                <Text style={styles.statValue}>{myPackages.length}</Text>
-                                <Text style={styles.statLabel}>Waiting</Text>
-                            </View>
-                            <View style={styles.statDivider} />
-                            <View style={styles.statItem}>
-                                <Text style={styles.statValue}>0</Text>
-                                <Text style={styles.statLabel}>Collected</Text>
-                            </View>
-                            <View style={styles.statDivider} />
-                            <View style={styles.statItem}>
-                                <Text style={styles.statValue}>{myPackages.length}</Text>
-                                <Text style={styles.statLabel}>Total</Text>
-                            </View>
+                        <View style={[styles.statsRow, { borderTopColor: themeColors.border }]}>
+                            <TouchableOpacity
+                                style={styles.statItem}
+                                onPress={() => navigation.navigate('PackageHistory', { filter: 'waiting' })}
+                            >
+                                <Text style={[styles.statValue, dynamicStyles.waitingColor]}>{packages.filter(p => p.status === 'stored').length}</Text>
+                                <Text style={[styles.statLabel, dynamicStyles.statLabel]}>Waiting</Text>
+                            </TouchableOpacity>
+                            <View style={[styles.statDivider, { backgroundColor: themeColors.border }]} />
+                            <TouchableOpacity
+                                style={styles.statItem}
+                                onPress={() => navigation.navigate('PackageHistory', { filter: 'collected' })}
+                            >
+                                <Text style={[styles.statValue, dynamicStyles.collectedColor]}>{packages.filter(p => p.status === 'collected').length}</Text>
+                                <Text style={[styles.statLabel, dynamicStyles.statLabel]}>Collected</Text>
+                            </TouchableOpacity>
+                            <View style={[styles.statDivider, { backgroundColor: themeColors.border }]} />
+                            <TouchableOpacity
+                                style={styles.statItem}
+                                onPress={() => navigation.navigate('PackageHistory', { filter: 'all' })}
+                            >
+                                <Text style={[styles.statValue, dynamicStyles.statValue]}>{packages.length}</Text>
+                                <Text style={[styles.statLabel, dynamicStyles.statLabel]}>Total</Text>
+                            </TouchableOpacity>
                         </View>
                     </View>
                 }
                 ListEmptyComponent={
                     <View style={styles.emptyState}>
-                        <MaterialCommunityIcons name="package-variant" size={60} color={COLORS.textSecondary} />
+                        <MaterialCommunityIcons name="package-variant" size={60} color="#B0B0B0" />
                         <Text style={styles.emptyText}>No packages waiting for collection.</Text>
                     </View>
                 }
@@ -118,23 +160,25 @@ const StudentDashboard = ({ navigation }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: COLORS.background,
+        backgroundColor: '#121212',
     },
     header: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        padding: 20,
-        backgroundColor: COLORS.surface,
+        paddingHorizontal: 24,
+        paddingVertical: 16,
+        backgroundColor: '#1E1E1E',
         borderBottomWidth: 1,
-        borderBottomColor: COLORS.border,
+        borderBottomColor: '#333333',
+        zIndex: 10,
     },
     headerTitle: {
         fontSize: 20,
         fontWeight: 'bold',
-        color: COLORS.textPrimary,
+        color: '#FFFFFF',
     },
-    headerActions: {
+    headerRight: {
         flexDirection: 'row',
         alignItems: 'center',
     },
@@ -149,7 +193,7 @@ const styles = StyleSheet.create({
         width: 8,
         height: 8,
         borderRadius: 4,
-        backgroundColor: COLORS.error,
+        backgroundColor: '#e74c3c',
     },
     logoutBtn: {
         padding: 5,
@@ -158,12 +202,12 @@ const styles = StyleSheet.create({
         padding: 20,
     },
     profileCard: {
-        backgroundColor: COLORS.surface,
+        backgroundColor: '#1E1E1E',
         borderRadius: 16,
         padding: 20,
         marginBottom: 25,
         borderWidth: 1,
-        borderColor: COLORS.border,
+        borderColor: '#333333',
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.3,
@@ -179,13 +223,13 @@ const styles = StyleSheet.create({
         width: 60,
         height: 60,
         borderRadius: 30,
-        backgroundColor: COLORS.primary,
+        backgroundColor: '#D4AF37',
         justifyContent: 'center',
         alignItems: 'center',
         marginRight: 15,
     },
     avatarText: {
-        color: COLORS.white,
+        color: '#FFFFFF',
         fontSize: 24,
         fontWeight: 'bold',
     },
@@ -195,17 +239,17 @@ const styles = StyleSheet.create({
     profileName: {
         fontSize: 20,
         fontWeight: 'bold',
-        color: COLORS.textPrimary,
+        color: '#FFFFFF',
         marginBottom: 4,
     },
     profileId: {
         fontSize: 14,
-        color: COLORS.textSecondary,
+        color: '#B0B0B0',
         marginBottom: 2,
     },
     profileEmail: {
         fontSize: 12,
-        color: COLORS.textSecondary,
+        color: '#B0B0B0',
     },
     statsRow: {
         flexDirection: 'row',
@@ -213,7 +257,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         paddingTop: 15,
         borderTopWidth: 1,
-        borderTopColor: COLORS.border,
+        borderTopColor: '#333333',
     },
     statItem: {
         alignItems: 'center',
@@ -222,25 +266,25 @@ const styles = StyleSheet.create({
     statValue: {
         fontSize: 18,
         fontWeight: 'bold',
-        color: COLORS.primary,
+        color: '#D4AF37',
         marginBottom: 4,
     },
     statLabel: {
         fontSize: 12,
-        color: COLORS.textSecondary,
+        color: '#B0B0B0',
     },
     statDivider: {
         width: 1,
         height: 30,
-        backgroundColor: COLORS.border,
+        backgroundColor: '#333333',
     },
     card: {
-        backgroundColor: COLORS.surface,
+        backgroundColor: '#1E1E1E',
         borderRadius: 16,
         padding: 20,
         marginBottom: 16,
         borderWidth: 1,
-        borderColor: COLORS.border,
+        borderColor: '#333333',
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.3,
@@ -253,9 +297,8 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginBottom: 15,
     },
-    courierInfo: {
-        flexDirection: 'row',
-        alignItems: 'center',
+    packageInfo: {
+        flex: 1,
     },
     iconContainer: {
         width: 40,
@@ -269,11 +312,11 @@ const styles = StyleSheet.create({
     courier: {
         fontSize: 16,
         fontWeight: 'bold',
-        color: COLORS.textPrimary,
+        color: '#FFFFFF',
     },
     date: {
         fontSize: 12,
-        color: COLORS.textSecondary,
+        color: '#B0B0B0',
     },
     statusBadge: {
         backgroundColor: 'rgba(39, 174, 96, 0.2)',
@@ -282,67 +325,40 @@ const styles = StyleSheet.create({
         borderRadius: 12,
     },
     statusText: {
-        color: COLORS.primary,
+        color: '#D4AF37',
         fontSize: 12,
         fontWeight: 'bold',
+    },
+    cardBody: {
+        marginTop: 5,
+    },
+    detailRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginBottom: 15,
+    },
+    detailItem: {
+        flex: 1,
+    },
+    otpSection: {
+        alignItems: 'center',
+        marginTop: 5,
+        backgroundColor: '#2C2C2C',
+        padding: 10,
+        borderRadius: 12,
+    },
+    otpBox: {
+        borderWidth: 1,
+        borderRadius: 8,
+        paddingHorizontal: 20,
+        paddingVertical: 5,
+        marginTop: 5,
+        borderStyle: 'dashed',
     },
     divider: {
         height: 1,
-        backgroundColor: COLORS.border,
+        backgroundColor: '#333333',
         marginBottom: 15,
-    },
-    infoRow: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        marginBottom: 20,
-    },
-    infoItem: {
-        flex: 1,
-        alignItems: 'center',
-    },
-    verticalDivider: {
-        width: 1,
-        height: '100%',
-        backgroundColor: COLORS.border,
-    },
-    label: {
-        fontSize: 12,
-        color: COLORS.textSecondary,
-        marginBottom: 4,
-    },
-    value: {
-        fontSize: 16,
-        fontWeight: 'bold',
-        color: COLORS.textPrimary,
-    },
-    otpContainer: {
-        backgroundColor: COLORS.inputBackground,
-        padding: 15,
-        borderRadius: 12,
-        alignItems: 'center',
-        marginBottom: 10,
-        borderWidth: 1,
-        borderColor: COLORS.border,
-        borderStyle: 'dashed',
-    },
-    otpLabel: {
-        fontSize: 12,
-        color: COLORS.textSecondary,
-        textTransform: 'uppercase',
-        letterSpacing: 1,
-        marginBottom: 5,
-    },
-    otpValue: {
-        fontSize: 32,
-        fontWeight: 'bold',
-        color: COLORS.primary,
-        letterSpacing: 8,
-    },
-    instruction: {
-        textAlign: 'center',
-        color: COLORS.textSecondary,
-        fontSize: 12,
-        fontStyle: 'italic',
     },
     emptyState: {
         alignItems: 'center',
@@ -350,7 +366,7 @@ const styles = StyleSheet.create({
         padding: 20,
     },
     emptyText: {
-        color: COLORS.textSecondary,
+        color: '#B0B0B0',
         fontSize: 16,
         marginTop: 10,
         textAlign: 'center',

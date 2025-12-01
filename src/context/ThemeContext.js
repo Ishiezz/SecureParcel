@@ -1,28 +1,43 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useAuth } from './AuthContext';
-import { COLORS as BASE_COLORS } from '../constants/colors';
+const BASE_COLORS = {
+    background: '#121212',
+    surface: '#1E1E1E',
+    primary: '#D4AF37',
+    secondary: '#F1C40F',
+    success: '#2ecc71',
+    textPrimary: '#FFFFFF',
+    textSecondary: '#B0B0B0',
+    inputBackground: '#2C2C2C',
+    border: '#333333',
+    error: '#e74c3c',
+    warning: '#f39c12',
+    white: '#FFFFFF',
+    black: '#000000',
+    overlay: 'rgba(0,0,0,0.7)',
+};
 
 const ThemeContext = createContext();
 
 const THEMES = {
     default: {
-        primary: '#D4AF37', // Gold
+        primary: '#D4AF37',
         secondary: '#F1C40F',
         success: '#2ecc71',
     },
     student: {
-        primary: '#D4AF37', // Gold
+        primary: '#D4AF37',
         secondary: '#F1C40F',
         success: '#2ecc71',
     },
     delivery: {
-        primary: '#E67E22', // Orange
-        secondary: '#F39C12',
+        primary: '#2980b9',
+        secondary: '#3498db',
         success: '#27ae60',
     },
     guard: {
-        primary: '#9b59b6', // Royal Purple
-        secondary: '#8e44ad',
+        primary: '#8e44ad',
+        secondary: '#9b59b6',
         success: '#2ecc71',
     }
 };

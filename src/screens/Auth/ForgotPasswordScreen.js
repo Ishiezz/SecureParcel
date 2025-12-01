@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { COLORS } from '../../constants/colors';
 
 const ForgotPasswordScreen = ({ navigation }) => {
     const [email, setEmail] = useState('');
@@ -23,7 +22,7 @@ const ForgotPasswordScreen = ({ navigation }) => {
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-                    <MaterialCommunityIcons name="arrow-left" size={24} color={COLORS.textPrimary} />
+                    <MaterialCommunityIcons name="arrow-left" size={24} color="#FFFFFF" />
                 </TouchableOpacity>
                 <Text style={styles.headerTitle}>Forgot Password</Text>
             </View>
@@ -36,11 +35,11 @@ const ForgotPasswordScreen = ({ navigation }) => {
                 <View style={styles.form}>
                     <Text style={styles.label}>Email Address</Text>
                     <View style={styles.inputContainer}>
-                        <MaterialCommunityIcons name="email-outline" size={20} color={COLORS.textSecondary} style={styles.inputIcon} />
+                        <MaterialCommunityIcons name="email-outline" size={20} color="#B0B0B0" style={styles.inputIcon} />
                         <TextInput
                             style={styles.input}
                             placeholder="Enter your email address"
-                            placeholderTextColor={COLORS.textSecondary}
+                            placeholderTextColor="#B0B0B0"
                             value={email}
                             onChangeText={setEmail}
                             keyboardType="email-address"
@@ -60,7 +59,7 @@ const ForgotPasswordScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: COLORS.background,
+        backgroundColor: '#121212',
     },
     header: {
         flexDirection: 'row',
@@ -71,33 +70,33 @@ const styles = StyleSheet.create({
     backButton: {
         marginRight: 15,
         padding: 8,
-        backgroundColor: COLORS.surface,
+        backgroundColor: '#1E1E1E',
         borderRadius: 20,
     },
     headerTitle: {
         fontSize: 24,
         fontWeight: 'bold',
-        color: COLORS.textPrimary,
+        color: '#FFFFFF',
     },
     content: {
         paddingHorizontal: 20,
     },
     description: {
         fontSize: 16,
-        color: COLORS.textSecondary,
+        color: '#B0B0B0',
         marginBottom: 30,
         lineHeight: 24,
     },
     form: {
-        backgroundColor: COLORS.surface,
+        backgroundColor: '#1E1E1E',
         padding: 20,
         borderRadius: 15,
         borderWidth: 1,
-        borderColor: COLORS.border,
+        borderColor: '#333333',
     },
     label: {
         fontSize: 16,
-        color: COLORS.textSecondary,
+        color: '#B0B0B0',
         marginBottom: 8,
         fontWeight: '500',
     },
@@ -105,9 +104,9 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         borderWidth: 1,
-        borderColor: COLORS.border,
+        borderColor: '#333333',
         borderRadius: 8,
-        backgroundColor: COLORS.inputBackground,
+        backgroundColor: '#2C2C2C',
         paddingHorizontal: 12,
         marginBottom: 20,
     },
@@ -118,16 +117,16 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingVertical: 12,
         fontSize: 16,
-        color: COLORS.textPrimary,
+        color: '#FFFFFF',
     },
     resetBtn: {
-        backgroundColor: COLORS.primary,
+        backgroundColor: '#D4AF37',
         padding: 16,
         borderRadius: 8,
         alignItems: 'center',
     },
     resetBtnText: {
-        color: COLORS.white,
+        color: '#FFFFFF',
         fontSize: 16,
         fontWeight: 'bold',
     },

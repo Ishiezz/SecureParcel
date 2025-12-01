@@ -2,14 +2,13 @@ import React from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { COLORS } from '../../constants/colors';
 
 const TermsPrivacyScreen = ({ navigation }) => {
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-                    <MaterialCommunityIcons name="arrow-left" size={24} color={COLORS.textPrimary} />
+                    <MaterialCommunityIcons name="arrow-left" size={24} color="#FFFFFF" />
                 </TouchableOpacity>
                 <Text style={styles.headerTitle}>Terms & Privacy</Text>
             </View>
@@ -46,14 +45,14 @@ const TermsPrivacyScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: COLORS.background,
+        backgroundColor: '#121212',
     },
     header: {
         flexDirection: 'row',
         alignItems: 'center',
         padding: 20,
         borderBottomWidth: 1,
-        borderBottomColor: COLORS.border,
+        borderBottomColor: '#333333',
     },
     backButton: {
         marginRight: 15,
@@ -61,7 +60,7 @@ const styles = StyleSheet.create({
     headerTitle: {
         fontSize: 20,
         fontWeight: 'bold',
-        color: COLORS.textPrimary,
+        color: '#FFFFFF',
     },
     content: {
         padding: 20,
@@ -69,23 +68,23 @@ const styles = StyleSheet.create({
     sectionTitle: {
         fontSize: 18,
         fontWeight: 'bold',
-        color: COLORS.primary,
+        color: '#D4AF37',
         marginBottom: 10,
         marginTop: 10,
     },
     text: {
         fontSize: 16,
-        color: COLORS.textSecondary,
+        color: '#B0B0B0',
         lineHeight: 24,
         marginBottom: 10,
     },
     bold: {
         fontWeight: 'bold',
-        color: COLORS.textPrimary,
+        color: '#FFFFFF',
     },
     divider: {
         height: 1,
-        backgroundColor: COLORS.border,
+        backgroundColor: '#333333',
         marginVertical: 20,
     },
 });

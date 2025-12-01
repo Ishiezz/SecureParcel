@@ -3,10 +3,9 @@ import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert, ScrollView 
 import { useAuth } from '../../context/AuthContext';
 import { useTheme } from '../../context/ThemeContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { COLORS } from '../../constants/colors';
 
 const DeliveryDashboard = ({ navigation }) => {
-    const { user, logout, addPackage } = useAuth();
+    const { user, logout, addPackage, verifyStudent } = useAuth();
     const { colors: themeColors } = useTheme();
 
     const dynamicStyles = {
@@ -27,6 +26,11 @@ const DeliveryDashboard = ({ navigation }) => {
     const handleDeposit = () => {
         if (!studentName || !studentId || !courier || !slot) {
             Alert.alert('Error', 'Please fill all fields');
+            return;
+        }
+
+        if (!verifyStudent(studentName, studentId)) {
+            Alert.alert('Error', 'Student not found. Please check the Name and ID.');
             return;
         }
 
@@ -68,7 +72,6 @@ const DeliveryDashboard = ({ navigation }) => {
                         <View style={styles.profileInfo}>
                             <Text style={styles.profileName}>{user?.name || 'Delivery Partner'}</Text>
                             <Text style={styles.profileId}>ID: {user?.id || 'D-XXXX'}</Text>
-                            <Text style={styles.profileEmail}>{user?.email || 'email@secureparcel.com'}</Text>
                         </View>
                     </View>
 
@@ -141,27 +144,27 @@ const DeliveryDashboard = ({ navigation }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: COLORS.background,
+        backgroundColor: '#121212',
     },
     header: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
         padding: 20,
-        backgroundColor: COLORS.surface,
+        backgroundColor: '#1E1E1E',
         borderBottomWidth: 1,
-        borderBottomColor: COLORS.border,
+        borderBottomColor: '#333333',
     },
     title: {
         fontSize: 20,
         fontWeight: 'bold',
-        color: COLORS.textPrimary,
+        color: '#FFFFFF',
     },
     logoutBtn: {
         padding: 8,
     },
     logoutText: {
-        color: COLORS.textSecondary,
+        color: '#B0B0B0',
         fontWeight: '600',
     },
     content: {
@@ -171,10 +174,10 @@ const styles = StyleSheet.create({
         fontSize: 22,
         fontWeight: 'bold',
         marginBottom: 20,
-        color: COLORS.textPrimary,
+        color: '#FFFFFF',
     },
     form: {
-        backgroundColor: COLORS.surface,
+        backgroundColor: '#1E1E1E',
         padding: 20,
         borderRadius: 12,
         shadowColor: '#000',
@@ -183,42 +186,42 @@ const styles = StyleSheet.create({
         shadowRadius: 8,
         elevation: 5,
         borderWidth: 1,
-        borderColor: COLORS.border,
+        borderColor: '#333333',
     },
     label: {
         fontSize: 16,
-        color: COLORS.textSecondary,
+        color: '#B0B0B0',
         marginBottom: 8,
         marginTop: 10,
     },
     input: {
         borderWidth: 1,
-        borderColor: COLORS.border,
+        borderColor: '#333333',
         borderRadius: 8,
         padding: 12,
         fontSize: 16,
-        backgroundColor: COLORS.inputBackground,
-        color: COLORS.textPrimary,
+        backgroundColor: '#2C2C2C',
+        color: '#FFFFFF',
     },
     submitBtn: {
-        backgroundColor: COLORS.primary,
+        backgroundColor: '#D4AF37',
         padding: 16,
         borderRadius: 8,
         marginTop: 30,
         alignItems: 'center',
     },
     submitText: {
-        color: COLORS.white,
+        color: '#FFFFFF',
         fontSize: 18,
         fontWeight: 'bold',
     },
     profileCard: {
-        backgroundColor: COLORS.surface,
+        backgroundColor: '#1E1E1E',
         borderRadius: 16,
         padding: 20,
         marginBottom: 25,
         borderWidth: 1,
-        borderColor: COLORS.border,
+        borderColor: '#333333',
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.3,
@@ -234,13 +237,13 @@ const styles = StyleSheet.create({
         width: 60,
         height: 60,
         borderRadius: 30,
-        backgroundColor: COLORS.primary,
+        backgroundColor: '#D4AF37',
         justifyContent: 'center',
         alignItems: 'center',
         marginRight: 15,
     },
     avatarText: {
-        color: COLORS.white,
+        color: '#FFFFFF',
         fontSize: 24,
         fontWeight: 'bold',
     },
@@ -250,25 +253,22 @@ const styles = StyleSheet.create({
     profileName: {
         fontSize: 20,
         fontWeight: 'bold',
-        color: COLORS.textPrimary,
+        color: '#FFFFFF',
         marginBottom: 4,
     },
     profileId: {
         fontSize: 14,
-        color: COLORS.textSecondary,
+        color: '#B0B0B0',
         marginBottom: 2,
     },
-    profileEmail: {
-        fontSize: 12,
-        color: COLORS.textSecondary,
-    },
+
     statsRow: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
         paddingTop: 15,
         borderTopWidth: 1,
-        borderTopColor: COLORS.border,
+        borderTopColor: '#333333',
     },
     statItem: {
         alignItems: 'center',
@@ -277,17 +277,17 @@ const styles = StyleSheet.create({
     statValue: {
         fontSize: 18,
         fontWeight: 'bold',
-        color: COLORS.primary,
+        color: '#D4AF37',
         marginBottom: 4,
     },
     statLabel: {
         fontSize: 12,
-        color: COLORS.textSecondary,
+        color: '#B0B0B0',
     },
     statDivider: {
         width: 1,
         height: 30,
-        backgroundColor: COLORS.border,
+        backgroundColor: '#333333',
     },
 });
 

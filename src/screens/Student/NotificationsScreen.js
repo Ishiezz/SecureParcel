@@ -2,7 +2,6 @@ import React from 'react';
 import { View, Text, StyleSheet, FlatList, TouchableOpacity } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { COLORS } from '../../constants/colors';
 
 const NotificationsScreen = ({ navigation }) => {
     // Mock notifications data
@@ -18,7 +17,7 @@ const NotificationsScreen = ({ navigation }) => {
                 <MaterialCommunityIcons
                     name={item.title.includes('Package') ? "package-variant" : "bell-outline"}
                     size={24}
-                    color={COLORS.white}
+                    color="#FFFFFF"
                 />
             </View>
             <View style={styles.textContainer}>
@@ -34,12 +33,10 @@ const NotificationsScreen = ({ navigation }) => {
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-                    <MaterialCommunityIcons name="arrow-left" size={24} color={COLORS.white} />
+                    <MaterialCommunityIcons name="arrow-left" size={24} color="#FFFFFF" />
                 </TouchableOpacity>
                 <Text style={styles.headerTitle}>Notifications</Text>
-                <TouchableOpacity>
-                    <MaterialCommunityIcons name="dots-vertical" size={24} color={COLORS.white} />
-                </TouchableOpacity>
+                <View style={{ width: 24 }} />
             </View>
 
             <FlatList
@@ -55,21 +52,21 @@ const NotificationsScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: COLORS.background,
+        backgroundColor: '#121212',
     },
     header: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
         padding: 20,
-        backgroundColor: COLORS.surface,
+        backgroundColor: '#1E1E1E',
         borderBottomWidth: 1,
-        borderBottomColor: COLORS.border,
+        borderBottomColor: '#333333',
     },
     headerTitle: {
         fontSize: 20,
         fontWeight: 'bold',
-        color: COLORS.textPrimary,
+        color: '#FFFFFF',
     },
     backBtn: {
         padding: 5,
@@ -79,7 +76,7 @@ const styles = StyleSheet.create({
     },
     notificationItem: {
         flexDirection: 'row',
-        backgroundColor: COLORS.surface,
+        backgroundColor: '#1E1E1E',
         padding: 15,
         borderRadius: 12,
         marginBottom: 15,
@@ -89,11 +86,11 @@ const styles = StyleSheet.create({
         shadowRadius: 8,
         elevation: 5,
         borderWidth: 1,
-        borderColor: COLORS.border,
+        borderColor: '#333333',
     },
     unreadItem: {
         borderLeftWidth: 4,
-        borderLeftColor: COLORS.primary,
+        borderLeftColor: '#D4AF37',
     },
     iconContainer: {
         width: 40,
@@ -104,10 +101,10 @@ const styles = StyleSheet.create({
         marginRight: 15,
     },
     unreadIcon: {
-        backgroundColor: COLORS.primary,
+        backgroundColor: '#D4AF37',
     },
     readIcon: {
-        backgroundColor: COLORS.textSecondary,
+        backgroundColor: '#B0B0B0',
     },
     textContainer: {
         flex: 1,
@@ -120,15 +117,15 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 16,
         fontWeight: 'bold',
-        color: COLORS.textPrimary,
+        color: '#FFFFFF',
     },
     time: {
         fontSize: 12,
-        color: COLORS.textSecondary,
+        color: '#B0B0B0',
     },
     message: {
         fontSize: 14,
-        color: COLORS.textSecondary,
+        color: '#B0B0B0',
         lineHeight: 20,
     },
 });

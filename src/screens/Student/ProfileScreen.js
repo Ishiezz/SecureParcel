@@ -2,18 +2,16 @@ import React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, ScrollView } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { COLORS } from '../../constants/colors';
 import { useAuth } from '../../context/AuthContext';
-import { useTheme } from '../../context/ThemeContext';
+
 
 const ProfileScreen = ({ navigation }) => {
     const { user } = useAuth();
-    const { colors: COLORS } = useTheme();
 
     const InfoItem = ({ icon, label, value }) => (
         <View style={styles.infoItem}>
             <View style={styles.iconContainer}>
-                <MaterialCommunityIcons name={icon} size={24} color={COLORS.primary} />
+                <MaterialCommunityIcons name={icon} size={24} color="#D4AF37" />
             </View>
             <View style={styles.textContainer}>
                 <Text style={styles.label}>{label}</Text>
@@ -26,7 +24,7 @@ const ProfileScreen = ({ navigation }) => {
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
                 <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
-                    <MaterialCommunityIcons name="arrow-left" size={24} color={COLORS.white} />
+                    <MaterialCommunityIcons name="arrow-left" size={24} color="#FFFFFF" />
                 </TouchableOpacity>
                 <Text style={styles.headerTitle}>My Profile</Text>
                 <View style={{ width: 24 }} />
@@ -80,16 +78,16 @@ const ProfileScreen = ({ navigation }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: COLORS.background,
+        backgroundColor: '#121212',
     },
     header: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
         padding: 20,
-        backgroundColor: COLORS.surface,
+        backgroundColor: '#1E1E1E',
         borderBottomWidth: 1,
-        borderBottomColor: COLORS.border,
+        borderBottomColor: '#333333',
     },
     backButton: {
         padding: 5,
@@ -97,7 +95,7 @@ const styles = StyleSheet.create({
     headerTitle: {
         fontSize: 20,
         fontWeight: 'bold',
-        color: COLORS.textPrimary,
+        color: '#FFFFFF',
     },
     content: {
         padding: 20,
@@ -110,7 +108,7 @@ const styles = StyleSheet.create({
         width: 100,
         height: 100,
         borderRadius: 50,
-        backgroundColor: COLORS.primary,
+        backgroundColor: '#D4AF37',
         justifyContent: 'center',
         alignItems: 'center',
         marginBottom: 15,
@@ -120,17 +118,17 @@ const styles = StyleSheet.create({
     avatarText: {
         fontSize: 40,
         fontWeight: 'bold',
-        color: COLORS.white,
+        color: '#FFFFFF',
     },
     name: {
         fontSize: 24,
         fontWeight: 'bold',
-        color: COLORS.textPrimary,
+        color: '#FFFFFF',
         marginBottom: 5,
     },
     role: {
         fontSize: 14,
-        color: COLORS.primary,
+        color: '#D4AF37',
         fontWeight: 'bold',
         letterSpacing: 1,
         backgroundColor: 'rgba(52, 152, 219, 0.1)',
@@ -139,11 +137,11 @@ const styles = StyleSheet.create({
         borderRadius: 20,
     },
     infoSection: {
-        backgroundColor: COLORS.surface,
+        backgroundColor: '#1E1E1E',
         borderRadius: 16,
         padding: 20,
         borderWidth: 1,
-        borderColor: COLORS.border,
+        borderColor: '#333333',
     },
     infoItem: {
         flexDirection: 'row',
@@ -164,17 +162,17 @@ const styles = StyleSheet.create({
     },
     label: {
         fontSize: 12,
-        color: COLORS.textSecondary,
+        color: '#B0B0B0',
         marginBottom: 2,
     },
     value: {
         fontSize: 16,
-        color: COLORS.textPrimary,
+        color: '#FFFFFF',
         fontWeight: '500',
     },
     divider: {
         height: 1,
-        backgroundColor: COLORS.border,
+        backgroundColor: '#333333',
         marginVertical: 5,
     },
 });

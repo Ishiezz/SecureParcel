@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, Alert, ScrollView } from 'react-native';
 import { useAuth } from '../../context/AuthContext';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { COLORS } from '../../constants/colors';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 
 const SignupScreen = ({ navigation, route }) => {
@@ -10,13 +9,14 @@ const SignupScreen = ({ navigation, route }) => {
     const [role, setRole] = useState('student');
     const [name, setName] = useState('');
     const [studentId, setStudentId] = useState('');
+    const [department, setDepartment] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [isPasswordVisible, setIsPasswordVisible] = useState(false);
     const [isTermsAccepted, setIsTermsAccepted] = useState(false);
 
-    const handleSignup = () => {
-        if (!name || !studentId || !email || !password) {
+    const handleSignup = async () => {
+        if (!name || !studentId || !department || !email || !password) {
             Alert.alert('Error', 'Please fill all fields');
             return;
         }
@@ -26,12 +26,8 @@ const SignupScreen = ({ navigation, route }) => {
             return;
         }
 
-        const success = signup({ name, studentId, email, password, role });
-        if (success) {
-            Alert.alert('Success', 'Account created successfully!', [
-                { text: 'OK', onPress: () => navigation.navigate('Login') }
-            ]);
-        } else {
+        const success = await signup({ name, studentId, department, email, password, role });
+        if (!success) {
             Alert.alert('Error', 'User already exists with this Email or ID');
         }
     };
@@ -51,11 +47,11 @@ const SignupScreen = ({ navigation, route }) => {
                 <View style={styles.form}>
                     <Text style={styles.label}>Full Name</Text>
                     <View style={styles.inputContainer}>
-                        <MaterialCommunityIcons name="account-outline" size={20} color={COLORS.textSecondary} style={styles.inputIcon} />
+                        <MaterialCommunityIcons name="account-outline" size={20} color="#B0B0B0" style={styles.inputIcon} />
                         <TextInput
                             style={styles.input}
                             placeholder="Enter your full name"
-                            placeholderTextColor={COLORS.textSecondary}
+                            placeholderTextColor="#B0B0B0"
                             value={name}
                             onChangeText={setName}
                         />
@@ -68,26 +64,38 @@ const SignupScreen = ({ navigation, route }) => {
                         <MaterialCommunityIcons
                             name={role === 'student' ? "card-account-details-outline" : role === 'delivery' ? "truck-delivery-outline" : "shield-account-outline"}
                             size={20}
-                            color={COLORS.textSecondary}
+                            color="#B0B0B0"
                             style={styles.inputIcon}
                         />
                         <TextInput
                             style={styles.input}
                             placeholder={`Enter your ${role === 'student' ? 'student' : role === 'delivery' ? 'delivery' : 'guard'} ID`}
-                            placeholderTextColor={COLORS.textSecondary}
+                            placeholderTextColor="#B0B0B0"
                             value={studentId}
                             onChangeText={setStudentId}
                             autoCapitalize="characters"
                         />
                     </View>
 
+                    <Text style={styles.label}>Department</Text>
+                    <View style={styles.inputContainer}>
+                        <MaterialCommunityIcons name="domain" size={20} color="#B0B0B0" style={styles.inputIcon} />
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Enter your department"
+                            placeholderTextColor="#B0B0B0"
+                            value={department}
+                            onChangeText={setDepartment}
+                        />
+                    </View>
+
                     <Text style={styles.label}>Email Address</Text>
                     <View style={styles.inputContainer}>
-                        <MaterialCommunityIcons name="email-outline" size={20} color={COLORS.textSecondary} style={styles.inputIcon} />
+                        <MaterialCommunityIcons name="email-outline" size={20} color="#B0B0B0" style={styles.inputIcon} />
                         <TextInput
                             style={styles.input}
                             placeholder="Enter your email address"
-                            placeholderTextColor={COLORS.textSecondary}
+                            placeholderTextColor="#B0B0B0"
                             value={email}
                             onChangeText={setEmail}
                             keyboardType="email-address"
@@ -97,11 +105,11 @@ const SignupScreen = ({ navigation, route }) => {
 
                     <Text style={styles.label}>Password</Text>
                     <View style={styles.inputContainer}>
-                        <MaterialCommunityIcons name="lock-outline" size={20} color={COLORS.textSecondary} style={styles.inputIcon} />
+                        <MaterialCommunityIcons name="lock-outline" size={20} color="#B0B0B0" style={styles.inputIcon} />
                         <TextInput
                             style={styles.input}
                             placeholder="Create a strong password"
-                            placeholderTextColor={COLORS.textSecondary}
+                            placeholderTextColor="#B0B0B0"
                             value={password}
                             onChangeText={setPassword}
                             secureTextEntry={!isPasswordVisible}
@@ -110,7 +118,7 @@ const SignupScreen = ({ navigation, route }) => {
                             <MaterialCommunityIcons
                                 name={isPasswordVisible ? "eye-off-outline" : "eye-outline"}
                                 size={20}
-                                color={COLORS.textSecondary}
+                                color="#B0B0B0"
                             />
                         </TouchableOpacity>
                     </View>
@@ -123,7 +131,7 @@ const SignupScreen = ({ navigation, route }) => {
                         <MaterialCommunityIcons
                             name={isTermsAccepted ? "checkbox-marked" : "checkbox-blank-outline"}
                             size={24}
-                            color={isTermsAccepted ? COLORS.primary : COLORS.textSecondary}
+                            color={isTermsAccepted ? "#D4AF37" : "#B0B0B0"}
                         />
                         <Text style={styles.termsText}>
                             I agree to the <Text style={styles.linkText} onPress={() => navigation.navigate('TermsPrivacy')}>Terms</Text> & <Text style={styles.linkText} onPress={() => navigation.navigate('TermsPrivacy')}>Privacy Policy</Text>
@@ -155,7 +163,7 @@ const SignupScreen = ({ navigation, route }) => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: COLORS.background,
+        backgroundColor: '#121212',
     },
     scrollContent: {
         flexGrow: 1,
@@ -169,21 +177,21 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 32,
         fontWeight: 'bold',
-        color: COLORS.textPrimary,
+        color: '#FFFFFF',
         marginBottom: 10,
     },
     subtitle: {
         fontSize: 16,
-        color: COLORS.textSecondary,
+        color: '#B0B0B0',
     },
     roleContainer: {
         flexDirection: 'row',
-        backgroundColor: COLORS.surface,
+        backgroundColor: '#1E1E1E',
         borderRadius: 10,
         padding: 4,
         marginBottom: 20,
         borderWidth: 1,
-        borderColor: COLORS.border,
+        borderColor: '#333333',
     },
     roleTab: {
         flex: 1,
@@ -192,19 +200,19 @@ const styles = StyleSheet.create({
         borderRadius: 8,
     },
     activeTab: {
-        backgroundColor: COLORS.primary,
+        backgroundColor: '#D4AF37',
     },
     roleText: {
-        color: COLORS.textSecondary,
+        color: '#B0B0B0',
         fontWeight: '600',
     },
     activeRoleText: {
-        color: COLORS.white,
+        color: '#FFFFFF',
         fontWeight: 'bold',
     },
     label: {
         fontSize: 16,
-        color: COLORS.textSecondary,
+        color: '#B0B0B0',
         marginBottom: 8,
         marginTop: 10,
         fontWeight: '500',
@@ -213,9 +221,9 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         borderWidth: 1,
-        borderColor: COLORS.border,
+        borderColor: '#333333',
         borderRadius: 8,
-        backgroundColor: COLORS.inputBackground,
+        backgroundColor: '#2C2C2C',
         paddingHorizontal: 12,
         marginBottom: 5,
     },
@@ -226,7 +234,7 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingVertical: 12,
         fontSize: 16,
-        color: COLORS.textPrimary,
+        color: '#FFFFFF',
     },
     termsContainer: {
         flexDirection: 'row',
@@ -235,24 +243,24 @@ const styles = StyleSheet.create({
         marginBottom: 5,
     },
     termsText: {
-        color: COLORS.textSecondary,
+        color: '#B0B0B0',
         fontSize: 14,
         marginLeft: 10,
         flex: 1,
     },
     linkText: {
-        color: COLORS.primary,
+        color: '#D4AF37',
         fontWeight: 'bold',
     },
     signupBtn: {
-        backgroundColor: COLORS.primary,
+        backgroundColor: '#D4AF37',
         padding: 16,
         borderRadius: 8,
         marginTop: 30,
         alignItems: 'center',
     },
     signupText: {
-        color: COLORS.white,
+        color: '#FFFFFF',
         fontSize: 18,
         fontWeight: 'bold',
     },
@@ -264,11 +272,11 @@ const styles = StyleSheet.create({
     dividerLine: {
         flex: 1,
         height: 1,
-        backgroundColor: COLORS.border,
+        backgroundColor: '#333333',
     },
     dividerText: {
         marginHorizontal: 10,
-        color: COLORS.textSecondary,
+        color: '#B0B0B0',
         fontSize: 14,
         fontWeight: '600',
     },
@@ -278,11 +286,11 @@ const styles = StyleSheet.create({
         marginTop: 20,
     },
     loginLinkText: {
-        color: COLORS.textSecondary,
+        color: '#B0B0B0',
         fontSize: 16,
     },
     loginLink: {
-        color: COLORS.primary,
+        color: '#D4AF37',
         fontSize: 16,
         fontWeight: 'bold',
     },
