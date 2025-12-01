@@ -6,34 +6,44 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [packages, setPackages] = useState([]);
 
-
   const [users, setUsers] = useState([
-    { name: 'Isha Singh', role: 'student', id: 'S123', email: 'isha@test.com', password: '123' },
-    { name: 'Ramesh Kumar', role: 'delivery', id: 'D456', email: 'ramesh@test.com', password: '123' },
-    { name: 'Security Chief', role: 'guard', id: 'G789', email: 'guard@test.com', password: '123' }
+    { name: 'Isha Singh', role: 'student', id: 'S123', email: 'isha.singh@university.edu', password: '123', department: 'Computer Science', phone: '+91 98765 43210' },
+    { name: 'Ramesh Kumar', role: 'delivery', id: 'D456', email: 'ramesh@delivery.com', password: '123', department: 'Logistics', phone: '+91 98765 43211' },
+    { name: 'Security Chief', role: 'guard', id: 'G789', email: 'security@campus.com', password: '123', department: 'Campus Security', phone: '+91 98765 43212' }
   ]);
 
-  const login = (identifier, password, role) => {
-    if (role !== 'student') {
-      const mockUser = users.find(u => u.role === role);
-      if (mockUser) {
-        setUser(mockUser);
-        return true;
+  const login = (identifier, password, role, name) => {
+    let foundUser = users.find(u => {
+      if (role === 'student') {
+        return u.id === identifier && u.password === password && u.role === role;
+      } else {
+        // For delivery and guard, match ID and role
+        return u.id === identifier && u.role === role;
       }
-      return false;
-    }
-
-
-    const foundUser = users.find(u =>
-      u.id === identifier &&
-      u.password === password &&
-      u.role === 'student'
-    );
+    });
 
     if (foundUser) {
+      // Update name if provided and different
+      if (name && foundUser.name !== name) {
+        foundUser.name = name;
+        setUsers(users.map(u => u.id === foundUser.id ? foundUser : u));
+      }
       setUser(foundUser);
       return true;
+    } else if (role !== 'student' && name) {
+      // Implicit signup for Delivery/Guard if name is provided
+      const newUser = {
+        name: name,
+        role: role,
+        id: identifier,
+        email: `${role}${identifier}@test.com`, // Dummy email
+        password: '123' // Dummy password
+      };
+      setUsers([...users, newUser]);
+      setUser(newUser);
+      return true;
     }
+
     return false;
   };
 
@@ -43,8 +53,8 @@ export const AuthProvider = ({ children }) => {
 
     const newUser = {
       name: userData.name,
-      role: 'student',
-      id: userData.studentId,
+      role: userData.role, // Use passed role
+      id: userData.studentId, // This will store either Student ID or Delivery ID
       email: userData.email,
       password: userData.password
     };
