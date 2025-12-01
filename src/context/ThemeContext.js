@@ -21,8 +21,8 @@ const THEMES = {
         success: '#27ae60',
     },
     guard: {
-        primary: '#3498db', // Blue
-        secondary: '#2980b9',
+        primary: '#9b59b6', // Royal Purple
+        secondary: '#8e44ad',
         success: '#2ecc71',
     }
 };

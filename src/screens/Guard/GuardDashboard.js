@@ -24,7 +24,7 @@ const GuardDashboard = ({ navigation }) => {
         textSecondary: { color: themeColors.textSecondary },
         primaryColor: themeColors.primary,
     };
-    const [otpInput, setOtpInput] = useState('');
+
     const [isScanning, setIsScanning] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const [verifiedPackage, setVerifiedPackage] = useState(null);
@@ -39,7 +39,6 @@ const GuardDashboard = ({ navigation }) => {
         const newOtp = [...otp];
         newOtp[index] = value;
         setOtp(newOtp);
-        setOtpInput(newOtp.join(''));
 
         if (value && index < 3) {
             inputRefs.current[index + 1].focus();
@@ -129,16 +128,13 @@ const GuardDashboard = ({ navigation }) => {
         <SafeAreaView style={styles.container}>
             <View style={[styles.header, dynamicStyles.header]}>
                 <View>
-                    <Text style={[styles.greeting, dynamicStyles.textSecondary]}>Shift Active</Text>
+
                     <Text style={[styles.username, dynamicStyles.textPrimary]}>{user?.name || 'Security Guard'}</Text>
                 </View>
                 <View style={styles.headerRight}>
-                    <View style={[styles.statusBadge, { backgroundColor: themeColors.success + '20' }]}>
-                        <View style={[styles.statusDot, { backgroundColor: themeColors.success }]} />
-                        <Text style={[styles.statusText, { color: themeColors.success }]}>Online</Text>
-                    </View>
+
                     <TouchableOpacity onPress={logout} style={[styles.logoutBtn, { backgroundColor: themeColors.surface }]}>
-                        <MaterialCommunityIcons name="logout" size={20} color={themeColors.error} />
+                        <MaterialCommunityIcons name="logout" size={20} color={themeColors.textSecondary} />
                     </TouchableOpacity>
                 </View>
             </View>
@@ -146,7 +142,7 @@ const GuardDashboard = ({ navigation }) => {
             <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"} style={{ flex: 1 }}>
                 <View style={styles.verifySection}>
                     <View style={styles.verifyHeader}>
-                        <MaterialCommunityIcons name="shield-check-outline" size={30} color={themeColors.primary} />
+                        <MaterialCommunityIcons name="shield-check-outline" size={30} color={themeColors.success} />
                         <Text style={styles.sectionTitle}>
                             {selectedPackage ? 'Verify Selected Order' : 'Verify Collection'}
                         </Text>
@@ -158,15 +154,28 @@ const GuardDashboard = ({ navigation }) => {
                             : 'Enter Student OTP'}
                     </Text>
                     <View style={styles.otpContainer}>
-                        <TextInput
-                            style={[styles.otpInput, dynamicStyles.input]}
-                            placeholder="Enter 4-digit OTP"
-                            placeholderTextColor={dynamicStyles.placeholder}
-                            keyboardType="numeric"
-                            maxLength={4}
-                            value={otpInput}
-                            onChangeText={setOtpInput}
-                        />
+                        {otp.map((digit, index) => (
+                            <TextInput
+                                key={index}
+                                ref={ref => inputRefs.current[index] = ref}
+                                style={[
+                                    styles.otpBox,
+                                    dynamicStyles.input,
+                                    { borderColor: COLORS.black },
+                                    digit ? styles.otpBoxFilled : null,
+                                    digit ? { backgroundColor: themeColors.primary + '10' } : null
+                                ]}
+                                value={digit}
+                                onChangeText={(value) => handleOtpChange(value, index)}
+                                onKeyPress={(e) => handleKeyPress(e, index)}
+                                keyboardType="numeric"
+                                maxLength={1}
+                                selectTextOnFocus
+                                textAlign="center"
+                                placeholder=""
+                                placeholderTextColor={dynamicStyles.placeholder}
+                            />
+                        ))}
                     </View>
 
                     <TouchableOpacity style={styles.verifyBtn} onPress={handleVerify}>
@@ -297,7 +306,7 @@ const styles = StyleSheet.create({
         width: 60,
         height: 60,
         borderWidth: 1,
-        borderColor: COLORS.border,
+        borderColor: COLORS.primary,
         borderRadius: 12,
         backgroundColor: COLORS.inputBackground,
         fontSize: 24,
