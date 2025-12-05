@@ -1,6 +1,11 @@
 # SecureParcel 📦
 
 > **Secure, Asynchronous Delivery for Campuses.**
+## 🎥 Demo Video
+Click the thumbnail below to watch the demo video:
+
+[Watch the video](https://drive.google.com/file/d/FILE_ID/view)
+
 
 ## 📌 Problem Statement
 On university campuses, students often face significant challenges with online deliveries. Orders get delayed, canceled, or missed because students are stuck in classes, have poor internet connectivity, or are unavailable to meet delivery agents. This leads to inconvenience for both students and delivery partners.
