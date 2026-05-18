@@ -1,26 +1,44 @@
 {
-  "name": "backend",
+  "name": "secureparcel-backend",
   "version": "1.0.0",
-  "description": "SecureParcel Backend API",
-  "main": "server.js",
+  "description": "SecureParcel Backend API — Node.js + TypeScript + Express + Firebase",
+  "main": "dist/server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "nodemon server.js",
-    "start": "node server.js"
+    "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "lint": "eslint src --ext .ts"
   },
   "keywords": [],
   "author": "",
-  "license": "0BSD",
+
   "dependencies": {
     "bcryptjs": "^3.0.3",
+    "compression": "^1.8.0",
     "cors": "^2.8.5",
     "dotenv": "^17.2.3",
     "express": "^5.1.0",
+    "express-rate-limit": "^7.5.0",
+    "firebase-admin": "^13.3.0",
+    "groq-sdk": "^0.21.0",
+    "helmet": "^8.0.0",
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^9.0.0",
-    "socket.io": "^4.8.1"
+    "multer": "^2.0.0",
+    "openai": "^4.73.0",
+    "socket.io": "^4.8.1",
+    "@google/generative-ai": "^0.24.0"
   },
   "devDependencies": {
-    "nodemon": "^3.1.11"
+    "@types/bcryptjs": "^3.0.0",
+    "@types/compression": "^1.8.0",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.1",
+    "@types/jsonwebtoken": "^9.0.9",
+    "@types/multer": "^1.4.12",
+    "@types/node": "^22.15.23",
+    "nodemon": "^3.1.11",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.9.2"
   }
 }
