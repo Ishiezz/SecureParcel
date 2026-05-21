@@ -1,114 +1,200 @@
-# SecureParcel 📦
+<div align="center">
+  <h1>📦 SecureParcel</h1>
+  <p><strong>Enterprise-Grade Campus Locker & Parcel Delivery Ecosystem</strong></p>
 
-> **Secure, Asynchronous Delivery for Campuses.**
-## 🎥 Demo Video
-Click the thumbnail below to watch the demo video:
-
-[Watch the video](https://drive.google.com/file/d/FILE_ID/view)
-
-
-## 📌 Problem Statement
-On university campuses, students often face significant challenges with online deliveries. Orders get delayed, canceled, or missed because students are stuck in classes, have poor internet connectivity, or are unavailable to meet delivery agents. This leads to inconvenience for both students and delivery partners.
-
-## 💡 Solution
-**SecureParcel** is a mobile application designed to bridge the gap between students, delivery partners, and campus security. It facilitates a secure and convenient delivery system using designated campus compartments (smart lockers).
-
-### ℹ️ Why "Asynchronous"?
-**"Asynchronous"** means "not happening at the same time."
-*   **Traditional (Synchronous)**: You must meet the delivery agent at the exact moment they arrive in campus or college.
-*   **SecureParcel (Asynchronous)**: The agent drops the parcel at **10:00 AM**. You collect it at **4:00 PM**. No coordination needed.
+  [![TypeScript](https://img.shields.io/badge/Language-TypeScript-blue.svg?style=for-the-badge&logo=typescript)](https://www.typescriptlang.org/)
+  [![React Native](https://img.shields.io/badge/Framework-React%20Native-61DAFB.svg?style=for-the-badge&logo=react)](https://reactnative.dev/)
+  [![Expo](https://img.shields.io/badge/Platform-Expo%20SDK%2054-000020.svg?style=for-the-badge&logo=expo)](https://expo.dev/)
+  [![Node.js](https://img.shields.io/badge/Backend-Node.js-339933.svg?style=for-the-badge&logo=nodedotjs)](https://nodejs.org/)
+  [![Socket.io](https://img.shields.io/badge/Realtime-Socket.io-010101.svg?style=for-the-badge&logo=socketdotio)](https://socket.io/)
+  [![Firebase](https://img.shields.io/badge/Database-Firebase-FFCA28.svg?style=for-the-badge&logo=firebase)](https://firebase.google.com/)
+</div>
 
 ---
 
-## � Current Features (v1.0 - UI & Frontend Logic)
-The current version of the application features a complete, polished User Interface and frontend logic built with React Native (Expo).
+## 📖 Overview
 
-### 🔐 Authentication & Security
--   **Secure Login/Signup**: Beautifully designed auth screens with form validation.
--   **Role-Based Access Control**: Distinct flows for **Students**, **Delivery Partners**, and **Security Guards**.
--   **Biometric Simulation**: UI for fingerprint verification.
+**SecureParcel** is a real-time, highly secure campus locker management and parcel delivery platform. It bridges the gap between students, delivery couriers, and campus security through a unified ecosystem. Built with a decoupled microservice-like architecture, SecureParcel delivers an ultra-smooth mobile experience backed by a resilient Node.js infrastructure, real-time WebSocket synchronization, and a smart cascading AI assistant.
 
-### 🎓 Student Portal
--   **Dashboard**: View active deliveries and assigned locker slots.
--   **Package History**: Track past deliveries with status updates.
--   **Profile Management**: Manage personal details and settings.
--   **Notifications**: UI for receiving delivery alerts.
-
-### 🚚 Delivery Partner Portal
--   **Deposit Interface**: Streamlined UI for entering student details and assigning lockers.
--   **OTP Generation**: Logic to generate secure pickup codes.
-
-### 🛡️ Security Guard Portal
--   **Verification Dashboard**: Tools to verify student identity and OTPs before package release.
+Whether managing high-volume package influxes or ensuring airtight parcel handovers via dynamic, time-sensitive QR codes, SecureParcel is designed for scale, speed, and absolute security.
 
 ---
 
-## 🔮 Future Roadmap (Backend & Real-time)
-We are actively working on the backend integration to bring the application to life with real-time data.
+## ✨ Key Features
 
--   [ ] **Backend Integration**: Connect the Express.js/MongoDB backend to replace local state/mock data.
--   [ ] **Real-time Socket.io**: Implement live updates so students get notified instantly when a package is deposited.
--   [ ] **Physical Locker Integration**: APIs to control smart locker locks (IoT integration).
--   [ ] **Push Notifications**: Integrate Expo Notifications for system-wide alerts.
--   [ ] **Production Biometrics**: Connect the simulated UI to actual device hardware (TouchID).
+### 👤 Role-Based Portals
+- **Student Hub:** Real-time package tracking, interactive locker map, instant AI chat support, and dynamic retrieval QR generation.
+- **Delivery Courier Station:** Streamlined parcel registration, intelligent locker allocation, and integrated photo-proof of delivery.
+- **Guard Verification Station:** Dedicated scanning interface with instant JWT validation and automated locker door release signaling.
 
----
+### 🔒 Zero-Trust Security & Dynamic QR
+- **Time-Sensitive QR Codes:** Retrieval codes auto-regenerate every 30 seconds with encrypted payload signatures, preventing unauthorized screenshot sharing.
+- **Biometric Authentication:** Native FaceID/TouchID integration ensures that only the authorized user can view secure pickup credentials.
+- **Defense-in-Depth Backend:** Express APIs hardened with rate limiters, Helmet headers, CORS filters, and strict role-based access control (RBAC).
 
-## 🛠️ Tech Stack
+### 🤖 Resilient AI Assistant
+- **Cascading LLM Architecture:** Designed for 100% uptime with automated fallback routing (Groq ⚡️ → OpenAI GPT-4o 🧠 → Google Gemini Pro 🌐).
+- **Context-Aware Responses:** The AI reads real-time locker occupancy and parcel state to provide highly accurate, contextual assistance to users.
+- **Offline Mock Fallbacks:** Built-in smart NLP failovers ensure the assistant remains functional even during API outages.
 
-### Frontend (Current)
--   **Framework**: React Native (Expo SDK 54)
--   **Navigation**: React Navigation (Native Stack)
--   **Styling**: Custom Styles, React Native Paper, Vector Icons
--   **State Management**: React Context API
-
-### Backend (In Progress)
--   **Runtime**: Node.js & Express.js
--   **Database**: MongoDB (Mongoose)
--   **Real-time**: Socket.io
+### ⚡️ Real-Time & Offline-Ready
+- **Instant Synchronization:** Powered by Socket.io and Firebase Firestore, state changes (like a parcel deposit) instantly push to all connected clients.
+- **Optimized Offline Experience:** Zustand state management seamlessly handles network drops with 1.5s safety timeouts, loading rich cached data environments to prevent application hangs.
 
 ---
 
-## 📂 Project Structure
+## 🏗 System Architecture
+
+SecureParcel leverages a modern, distributed topology ensuring clean separation of concerns.
+
+```mermaid
+graph TD
+    subgraph Mobile_Application ["📱 React Native Expo Client"]
+        SP[Student Portal]
+        DP[Delivery Portal]
+        GP[Guard Scan Station]
+        Zustand[Zustand Store Manager]
+    end
+
+    subgraph Native_Sensors ["🛠 Hardware / Native Bindings"]
+        Bio[Biometric Auth]
+        Cam[Expo Camera Scanner]
+        Hap[Haptic Engine]
+    end
+
+    subgraph Backend_Infrastructure ["⚙️ Node.js + TS Express Server"]
+        API[Secure REST API]
+        WS[Socket.io Real-time Server]
+        AuthMid[Firebase JWT Auth]
+        AIEng[AI Orchestrator]
+    end
+
+    subgraph Cloud_Providers ["☁️ Cloud Services"]
+        FB[Firebase Firestore & Auth]
+        Push[Expo Push Notifications]
+        LLM[Groq / OpenAI / Gemini]
+    end
+
+    %% Client Internals
+    SP --> Zustand
+    DP --> Zustand
+    GP --> Zustand
+    Zustand --> Bio
+    GP --> Cam
+    Zustand --> Hap
+
+    %% Network flows
+    Mobile_Application <--> |HTTPS + JWT| API
+    Mobile_Application <--> |WebSocket| WS
+
+    %% Cloud flows
+    API <--> FB
+    WS <--> FB
+    API --> Push
+    API <--> AIEng
+    AIEng <--> LLM
 ```
-SecureParcel/
-├── src/                # React Native Frontend
-│   ├── screens/        # App Screens
-│   │   ├── Auth/       # Login, Signup, Forgot Password
-│   │   ├── Student/    # Dashboard, History, Profile
-│   │   ├── Delivery/   # Delivery Dashboard
-│   │   └── Guard/      # Guard Dashboard
-│   ├── context/        # Global State (Auth, Theme)
-│   └── navigation/     # App Navigation Setup
-├── backend/            # Node.js API (Skeleton)
-└── assets/             # Images and Icons
-```
 
 ---
 
-## 🏃‍♂️ Getting Started
+## 🛠 Technology Stack
+
+### Mobile Client
+* **Framework:** React Native, Expo SDK 54
+* **Language:** TypeScript
+* **State Management:** Zustand (Multi-store architecture)
+* **Animations & UI:** React Native Reanimated, Custom Glassmorphism
+* **Integrations:** Expo Camera, Local Authentication, Haptics
+
+### Backend Server
+* **Environment:** Node.js
+* **Framework:** Express.js (TypeScript)
+* **Real-time Engine:** Socket.io
+* **Authentication:** Firebase Admin SDK (JWT Validation)
+* **Security:** Helmet, express-rate-limit, cors
+
+### Database & Cloud
+* **Database:** Firebase Firestore
+* **Notifications:** Expo Push Notifications Servers
+* **AI Providers:** Groq, OpenAI, Google Gemini
+
+### Telemetry & Analytics
+* **Crash Reporting:** Sentry SDK
+* **User Analytics:** Mixpanel
+* **Monetization/IAP:** RevenueCat
+
+---
+
+## 🚀 Getting Started
 
 ### Prerequisites
--   **Node.js** & **npm**
--   **Expo Go** app on your phone.
+* Node.js (v18+)
+* Expo CLI (`npm install -g expo-cli`)
+* Firebase Project Setup
 
-### Setup Instructions
-1.  **Install Dependencies**:
-    ```bash
-    npm install
-    ```
-2.  **Start the App**:
-    ```bash
-    npx expo start
-    ```
-3.  **Run on Device**:
-    -   Scan the QR code with **Expo Go**.
-    -   Press `i` for iOS Simulator or `a` for Android Emulator.
+### 1. Repository Setup
+```bash
+git clone https://github.com/AyushCoder9/SecPar-ish.git
+cd SecPar-ish
+```
+
+### 2. Environment Configuration
+Duplicate the provided `.env.example` to `.env` in both the root directory and the `backend` directory.
+
+**Backend Configuration (`backend/.env`):**
+```env
+PORT=5000
+FIREBASE_PROJECT_ID=your-project-id
+FIREBASE_CLIENT_EMAIL=your-service-account-email
+FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----"
+
+# AI Configuration
+GROQ_API_KEY=your-groq-key
+OPENAI_API_KEY=your-openai-key
+GEMINI_API_KEY=your-gemini-key
+```
+
+**Frontend Configuration (`.env`):**
+```env
+EXPO_PUBLIC_API_URL=http://localhost:5000
+EXPO_PUBLIC_SENTRY_DSN=your-sentry-dsn
+EXPO_PUBLIC_MIXPANEL_TOKEN=your-mixpanel-token
+EXPO_PUBLIC_RC_APPLE_KEY=your-revenuecat-apple-key
+EXPO_PUBLIC_RC_GOOGLE_KEY=your-revenuecat-google-key
+```
+
+### 3. Running the Application
+
+**Start the Node.js Backend Server:**
+```bash
+cd backend
+npm install
+npm run dev
+```
+*Server runs on `http://localhost:5000` with hot-reloading.*
+
+**Start the React Native Expo Client:**
+```bash
+# From the project root
+npm install
+npx expo start
+```
+*Use the Expo Go app on your iOS or Android device to scan the QR code, or launch the iOS Simulator/Android Emulator.*
 
 ---
 
-## 🤝 Contributing
-Contributions are welcome! Please fork the repository and submit a pull request.
+## 🧪 Development & Tooling
 
-## 📄 License
-This project is licensed under the 0BSD License.
+**Type Checking:**
+Run strict TypeScript validation across the project:
+```bash
+npx tsc --noEmit
+```
+
+**Production Build (Backend):**
+Compile the backend for production deployment:
+```bash
+cd backend
+npm run build
+npm start
+```
