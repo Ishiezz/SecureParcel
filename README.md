@@ -134,8 +134,8 @@ graph TD
 
 ### 1. Repository Setup
 ```bash
-git clone https://github.com/AyushCoder9/SecPar-ish.git
-cd SecPar-ish
+git clone https://github.com/Ishiezz/SecureParcel.git
+cd SecureParcel
 ```
 
 ### 2. Environment Configuration
